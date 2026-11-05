@@ -53,12 +53,29 @@ def load_model(model_id: str, device: str):
     return processor, model
 
 
-def run_inference(processor, model, image_path: Path, prompt: str, max_tokens: int):
-    """Perform generation through the official Transformers multimodal API."""
+def run_inference(
+    processor,
+    model,
+    image_path: Path,
+    prompt: str,
+    max_tokens: int,
+    *,
+    do_image_splitting: bool = True,
+    image: Image.Image | None = None,
+):
+    """Perform generation through the official Transformers multimodal API.
+
+    ``do_image_splitting`` must match adversarial preprocessing when evaluating
+    attacked images. Pass a PIL ``image`` to skip reloading from disk (used for
+    in-memory perturbed tensors converted once at the eval boundary).
+    """
     import torch
 
-    with Image.open(image_path) as image_file:
-        image = image_file.convert("RGB")
+    if image is None:
+        with Image.open(image_path) as image_file:
+            image = image_file.convert("RGB")
+    else:
+        image = image.convert("RGB")
     messages = [{"role": "user", "content": [
         {"type": "image", "image": image},
         {"type": "text", "text": prompt},
@@ -69,6 +86,7 @@ def run_inference(processor, model, image_path: Path, prompt: str, max_tokens: i
         tokenize=True,
         return_dict=True,
         return_tensors="pt",
+        processor_kwargs={"do_image_splitting": do_image_splitting},
     )
     inputs = {name: value.to(model.device) if hasattr(value, "to") else value
               for name, value in inputs.items()}
@@ -92,6 +110,12 @@ def main() -> None:
                         help="Number of images, not image/task/condition evaluations")
     parser.add_argument("--max-new-tokens", type=int, default=12)
     parser.add_argument("--output", type=Path, default=Path("results/baseline.jsonl"))
+    parser.add_argument(
+        "--do-image-splitting",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="SmolVLM image splitting. Phase C uses --no-do-image-splitting consistently.",
+    )
     parser.add_argument("--dry-run", action="store_true", help="Inspect prompts without downloading a model")
     args = parser.parse_args()
 
@@ -114,7 +138,11 @@ def main() -> None:
     import transformers
 
     device = select_device(args.device)
-    print(f"Loading {args.model} on {device}; {len(jobs)} evaluations", flush=True)
+    print(
+        f"Loading {args.model} on {device}; {len(jobs)} evaluations; "
+        f"do_image_splitting={args.do_image_splitting}",
+        flush=True,
+    )
     processor, model = load_model(args.model, device)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     summary = defaultdict(lambda: [0, 0])
@@ -123,8 +151,14 @@ def main() -> None:
         for index, (record, task, condition) in enumerate(jobs, start=1):
             prompt = build_prompt(record, task, condition)
             start = time.perf_counter()
-            answer = run_inference(processor, model, Path(record["absolute_image"]),
-                                   prompt, args.max_new_tokens)
+            answer = run_inference(
+                processor,
+                model,
+                Path(record["absolute_image"]),
+                prompt,
+                args.max_new_tokens,
+                do_image_splitting=args.do_image_splitting,
+            )
             elapsed = time.perf_counter() - start
             parsed = parse_answer(answer, task)
             correct = parsed == record[task]
@@ -146,6 +180,7 @@ def main() -> None:
                 "correct": correct,
                 "seconds": round(elapsed, 3),
                 "attack": "none",
+                "do_image_splitting": args.do_image_splitting,
                 "model": args.model,
                 "device": device,
                 "torch_version": torch.__version__,

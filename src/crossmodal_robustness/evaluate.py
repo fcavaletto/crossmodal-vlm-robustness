@@ -31,26 +31,70 @@ def select_device(preferred: str):
     return preferred
 
 
-def load_model(model_id: str, device: str):
+def load_model(model_id: str, device: str, *, revision: str | None = None):
+    """Load processor + model; optionally pin and verify a HF revision.
+
+    When ``revision`` is set, both the processor and the model are loaded from
+    that commit, and the resolved model ``_commit_hash`` must match.
+    """
     import torch
     from transformers import AutoModelForImageTextToText, AutoProcessor
 
-    processor = AutoProcessor.from_pretrained(model_id)
+    pretrained_kwargs = {}
+    if revision is not None:
+        pretrained_kwargs["revision"] = revision
+
+    processor = AutoProcessor.from_pretrained(model_id, **pretrained_kwargs)
     # Prefer `dtype=` (Transformers >=5); fall back for older releases.
     try:
         model = AutoModelForImageTextToText.from_pretrained(
             model_id,
             dtype=torch.float32,
             attn_implementation="eager",
+            **pretrained_kwargs,
         ).to(device)
     except TypeError:
         model = AutoModelForImageTextToText.from_pretrained(
             model_id,
             torch_dtype=torch.float32,
             attn_implementation="eager",
+            **pretrained_kwargs,
         ).to(device)
     model.eval()
+    if revision is not None:
+        model_commit = _resolved_commit_hash(model)
+        processor_commit = _resolved_commit_hash(processor)
+        _assert_revision_match("model", model_commit, revision)
+        if processor_commit is not None:
+            _assert_revision_match("processor", processor_commit, revision)
+        processor._frozen_revision = revision  # type: ignore[attr-defined]
+        model.config._frozen_revision_verified = revision
     return processor, model
+
+
+def _resolved_commit_hash(obj) -> str | None:
+    """Best-effort HF commit hash from a loaded model or processor."""
+    for candidate in (
+        getattr(obj, "config", None),
+        obj,
+        getattr(obj, "tokenizer", None),
+        getattr(obj, "image_processor", None),
+    ):
+        if candidate is None:
+            continue
+        commit = getattr(candidate, "_commit_hash", None)
+        if commit:
+            return str(commit)
+    return None
+
+
+def _assert_revision_match(label: str, got: str | None, wanted: str) -> None:
+    if got is None:
+        raise RuntimeError(
+            f"Loaded {label} has no _commit_hash; cannot verify revision {wanted}"
+        )
+    if not str(got).startswith(wanted[:12]) and str(got) != wanted:
+        raise RuntimeError(f"{label} revision mismatch: wanted {wanted}, got {got}")
 
 
 def run_inference(

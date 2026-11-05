@@ -22,6 +22,7 @@ from .dataset import COLORS, SHAPES, build_prompt, load_manifest, parse_answer
 from .evaluate import DEFAULT_MODEL, load_model, run_inference, select_device
 from .gradient_gate import freeze_model, load_image_01, mps_mem_mb, rss_mb
 from .loss_validation import score_answer
+from .seeds import attack_noise_seed
 
 
 def select_balanced_development(records: list[dict[str, Any]], n_images: int) -> list[dict[str, Any]]:
@@ -317,7 +318,13 @@ def run_phase_d(args: argparse.Namespace) -> dict[str, Any]:
                         if key in done:
                             continue
                         t0 = time.perf_counter()
-                        seed = args.seed + index * 131 + hash((task, attack_name, f"{epsilon:.8f}")) % 10_007
+                        seed = attack_noise_seed(
+                            base_seed=args.seed,
+                            image_index=index,
+                            task=task,
+                            attack_name=attack_name,
+                            epsilon=epsilon,
+                        )
                         adv = craft_attack(
                             attack_name,
                             clean_tensor,

@@ -226,6 +226,7 @@ def build_metrics(rows: list[dict[str, Any]], n_boot: int = 2000) -> dict[str, A
                     per_image, primary="neutral", control="supportive", n_boot=n_boot
                 )
 
+    floor = _floor_diagnostics_from_rows(rows)
     return {
         "n_rows": len(rows),
         "n_images": len({r["image_id"] for r in rows}),
@@ -235,14 +236,44 @@ def build_metrics(rows: list[dict[str, Any]], n_boot: int = 2000) -> dict[str, A
         "likelihood_deltas": likelihood_deltas(rows),
         "additional_errors": add_err,
         "did_bootstrap": did,
-        "floor_effect_color_misleading": {
-            "clean_accuracy_full_dev_nosplit": 6 / 64,
-            "note": (
-                "No-split misleading-color clean accuracy is ~9.4%. Low adversarial "
-                "accuracy under misleading must not be read as amplification; use "
-                "additional-error / DiD on paired images instead."
-            ),
-        },
+        "floor_effect_color_misleading": floor,
+    }
+
+
+def _floor_diagnostics_from_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """Compute misleading-color clean accuracy from *this* result set only."""
+    cleans = [
+        r for r in rows
+        if r["attack"] == "clean" and r["task"] == "color"
+    ]
+    if not cleans:
+        return {
+            "clean_accuracy_misleading_color": None,
+            "n_images": 0,
+            "note": "No clean color rows available in this result set.",
+        }
+    n = 0
+    correct = 0
+    for row in cleans:
+        for evaluation in row["evaluations"]:
+            if evaluation["condition"] != "misleading":
+                continue
+            n += 1
+            correct += int(evaluation["correct"])
+    accuracy = correct / n if n else None
+    note = None
+    if accuracy is not None and accuracy <= 0.25:
+        note = (
+            "Low clean misleading-color accuracy in this split leaves little room "
+            "for additional attack-caused errors; do not interpret low robust "
+            "accuracy under misleading as conflict amplification. Use "
+            "additional-error / DiD on paired images instead."
+        )
+    return {
+        "clean_accuracy_misleading_color": accuracy,
+        "correct": correct,
+        "n_images": n,
+        "note": note,
     }
 
 

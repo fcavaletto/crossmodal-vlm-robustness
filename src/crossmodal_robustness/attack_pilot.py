@@ -21,6 +21,7 @@ from .attacks.vlm_loss import make_answer_nll_loss, tensor_to_pil
 from .dataset import build_prompt, load_manifest, parse_answer
 from .evaluate import DEFAULT_MODEL, load_model, run_inference, select_device
 from .gradient_gate import freeze_model, load_image_01, mps_mem_mb, rss_mb
+from .seeds import stable_seed_int
 
 
 def evaluate_image(
@@ -120,7 +121,12 @@ def run_pilot(args: argparse.Namespace) -> dict[str, Any]:
                     generator = torch.Generator(device=device)
                     # MPS generators may be limited — build noise on CPU then move.
                     generator = torch.Generator()
-                    generator.manual_seed(args.seed + index * 17 + hash(task) % 997)
+                    noise_seed = (
+                        args.seed
+                        + index * 17
+                        + stable_seed_int(task, "attack_pilot_noise_v1", modulus=997)
+                    )
+                    generator.manual_seed(noise_seed)
                     adv = random_linf_noise(
                         clean_tensor.cpu(), epsilon=args.epsilon, generator=generator
                     ).to(device)

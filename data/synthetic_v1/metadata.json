@@ -1,0 +1,29 @@
+{
+  "name": "synthetic_v1",
+  "generator": "crossmodal_robustness.generate_dataset",
+  "seed": 20261105,
+  "image_size": [
+    256,
+    256
+  ],
+  "count": 96,
+  "development_count": 64,
+  "test_count": 32,
+  "labels": {
+    "color": [
+      "red",
+      "blue",
+      "green",
+      "yellow"
+    ],
+    "shape": [
+      "circle",
+      "square",
+      "triangle",
+      "star"
+    ]
+  },
+  "dataset_origin": "Original deterministic vector-like graphics rendered with Pillow; no external images",
+  "license": "MIT (see project LICENSE)",
+  "caution": "Synthetic, visually simple, and not representative of real-world VQA"
+}

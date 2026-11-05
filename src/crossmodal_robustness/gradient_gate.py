@@ -92,8 +92,16 @@ def differentiable_pixel_values(
     return outputs["pixel_values"], outputs["pixel_attention_mask"]
 
 
-def answer_token_ids(processor, answer: str) -> torch.Tensor:
-    ids = processor.tokenizer(answer, add_special_tokens=False, return_tensors="pt")["input_ids"]
+def answer_token_ids(processor, answer: str, *, leading_space: bool = True) -> torch.Tensor:
+    """Token ids for a short answer as it appears after ``Assistant:``.
+
+    SmolVLM greedy decoding emits leading-space BPE pieces (``Ġred``), not the
+    bare wordpiece (``red``). Scoring/attacking the bare ids yields near-zero
+    probability and a misaligned objective — always prefer ``leading_space=True``
+    unless deliberately probing tokenization.
+    """
+    text = f" {answer}" if leading_space and not answer.startswith(" ") else answer
+    ids = processor.tokenizer(text, add_special_tokens=False, return_tensors="pt")["input_ids"]
     if ids.numel() == 0:
         raise ValueError(f"Answer {answer!r} produced no tokens")
     return ids

@@ -1,0 +1,76 @@
+{
+  "n": 384,
+  "do_image_splitting": false,
+  "by_task_condition": {
+    "color|misleading": {
+      "n": 64,
+      "correct": 6,
+      "invalid": 0,
+      "wrong": 58
+    },
+    "color|neutral": {
+      "n": 64,
+      "correct": 63,
+      "invalid": 0,
+      "wrong": 1
+    },
+    "color|supportive": {
+      "n": 64,
+      "correct": 64,
+      "invalid": 0,
+      "wrong": 0
+    },
+    "shape|misleading": {
+      "n": 64,
+      "correct": 29,
+      "invalid": 0,
+      "wrong": 35
+    },
+    "shape|neutral": {
+      "n": 64,
+      "correct": 48,
+      "invalid": 0,
+      "wrong": 16
+    },
+    "shape|supportive": {
+      "n": 64,
+      "correct": 64,
+      "invalid": 0,
+      "wrong": 0
+    }
+  },
+  "by_condition": {
+    "misleading": {
+      "n": 128,
+      "correct": 35,
+      "invalid": 0
+    },
+    "neutral": {
+      "n": 128,
+      "correct": 111,
+      "invalid": 0
+    },
+    "supportive": {
+      "n": 128,
+      "correct": 128,
+      "invalid": 0
+    }
+  },
+  "overall": {
+    "correct": 274,
+    "invalid": 0,
+    "n": 384
+  },
+  "latency": {
+    "mean": 0.307859375,
+    "median": 0.305,
+    "min": 0.273,
+    "max": 0.647
+  },
+  "compared_to_phase_a_split_default": {
+    "phase_a_overall_correct": 272,
+    "phase_a_overall_accuracy": 0.7083333333333334,
+    "nosplit_overall_accuracy": 0.7135416666666666,
+    "delta_accuracy": 0.005208333333333259
+  }
+}

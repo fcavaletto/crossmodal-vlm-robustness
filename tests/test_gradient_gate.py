@@ -23,12 +23,15 @@ class GradientGateHelperTests(unittest.TestCase):
             )
 
         processor = _Proc()
-        for word in ("red", "blue", "green", "yellow", "circle", "square", "star"):
+        for word in ("red", "blue", "green", "yellow", "circle", "square", "star", "triangle"):
             ids = answer_token_ids(processor, word)
             self.assertGreaterEqual(ids.numel(), 1)
-        # Multi-token label still accepted.
-        tri = answer_token_ids(processor, "triangle")
-        self.assertGreaterEqual(tri.numel(), 2)
+            tokens = processor.tokenizer.convert_ids_to_tokens(ids[0])
+            self.assertTrue(tokens[0].startswith("Ġ") or tokens[0].startswith("▁"))
+        # Bare (no leading space) encoding differs and is the wrong attack target.
+        bare = answer_token_ids(processor, "red", leading_space=False)
+        spaced = answer_token_ids(processor, "red", leading_space=True)
+        self.assertFalse(torch.equal(bare, spaced))
 
     def test_differentiable_pixel_values_keep_grad(self):
         from transformers import AutoProcessor

@@ -35,7 +35,10 @@ def load_model(model_id: str, device: str, *, revision: str | None = None):
     """Load processor + model; optionally pin and verify a HF revision.
 
     When ``revision`` is set, both the processor and the model are loaded from
-    that commit, and the resolved model ``_commit_hash`` must match.
+    that commit. Verification prefers object ``_commit_hash`` when present;
+    otherwise confirms via ``huggingface_hub.model_info(...).sha`` that the
+    requested revision resolves to the frozen commit (Transformers 5.x may omit
+    ``_commit_hash`` on this checkpoint).
     """
     import torch
     from transformers import AutoModelForImageTextToText, AutoProcessor
@@ -43,6 +46,8 @@ def load_model(model_id: str, device: str, *, revision: str | None = None):
     pretrained_kwargs = {}
     if revision is not None:
         pretrained_kwargs["revision"] = revision
+        hub_sha = _hub_revision_sha(model_id, revision)
+        _assert_revision_match("hub", hub_sha, revision)
 
     processor = AutoProcessor.from_pretrained(model_id, **pretrained_kwargs)
     # Prefer `dtype=` (Transformers >=5); fall back for older releases.
@@ -64,12 +69,24 @@ def load_model(model_id: str, device: str, *, revision: str | None = None):
     if revision is not None:
         model_commit = _resolved_commit_hash(model)
         processor_commit = _resolved_commit_hash(processor)
-        _assert_revision_match("model", model_commit, revision)
+        if model_commit is not None:
+            _assert_revision_match("model", model_commit, revision)
         if processor_commit is not None:
             _assert_revision_match("processor", processor_commit, revision)
         processor._frozen_revision = revision  # type: ignore[attr-defined]
         model.config._frozen_revision_verified = revision
+        model.config._frozen_revision_hub_sha = hub_sha
     return processor, model
+
+
+def _hub_revision_sha(model_id: str, revision: str) -> str:
+    from huggingface_hub import model_info
+
+    info = model_info(model_id, revision=revision)
+    sha = getattr(info, "sha", None)
+    if not sha:
+        raise RuntimeError(f"huggingface_hub returned no sha for {model_id}@{revision}")
+    return str(sha)
 
 
 def _resolved_commit_hash(obj) -> str | None:
@@ -91,7 +108,7 @@ def _resolved_commit_hash(obj) -> str | None:
 def _assert_revision_match(label: str, got: str | None, wanted: str) -> None:
     if got is None:
         raise RuntimeError(
-            f"Loaded {label} has no _commit_hash; cannot verify revision {wanted}"
+            f"Loaded {label} has no commit hash; cannot verify revision {wanted}"
         )
     if not str(got).startswith(wanted[:12]) and str(got) != wanted:
         raise RuntimeError(f"{label} revision mismatch: wanted {wanted}, got {got}")

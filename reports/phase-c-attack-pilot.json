@@ -1,0 +1,3255 @@
+{
+  "phase": "C",
+  "pilot": true,
+  "model": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct",
+  "device": "mps",
+  "do_image_splitting": false,
+  "epsilon": 0.031372549,
+  "step_size": 0.007843137,
+  "pgd_steps": 7,
+  "optimize_condition": "neutral",
+  "n_images": 8,
+  "tasks": [
+    "color",
+    "shape"
+  ],
+  "conditions": [
+    "neutral",
+    "supportive",
+    "misleading"
+  ],
+  "attacks": [
+    "clean",
+    "noise",
+    "fgsm",
+    "pgd"
+  ],
+  "wall_seconds": 762.8,
+  "torch_version": "2.15.0",
+  "transformers_version": "5.22.1",
+  "python_version": "3.12.14",
+  "summary": {
+    "clean": {
+      "by_condition": {
+        "neutral": {
+          "n": 16,
+          "correct": 12,
+          "invalid": 0
+        },
+        "supportive": {
+          "n": 16,
+          "correct": 16,
+          "invalid": 0
+        },
+        "misleading": {
+          "n": 16,
+          "correct": 2,
+          "invalid": 0
+        }
+      },
+      "nll_increased_rate": 0.0,
+      "epsilon_bound_ok_rate": 1.0
+    },
+    "fgsm": {
+      "by_condition": {
+        "neutral": {
+          "n": 16,
+          "correct": 12,
+          "invalid": 0
+        },
+        "supportive": {
+          "n": 16,
+          "correct": 16,
+          "invalid": 0
+        },
+        "misleading": {
+          "n": 16,
+          "correct": 2,
+          "invalid": 0
+        }
+      },
+      "nll_increased_rate": 0.9375,
+      "epsilon_bound_ok_rate": 1.0
+    },
+    "noise": {
+      "by_condition": {
+        "neutral": {
+          "n": 16,
+          "correct": 12,
+          "invalid": 0
+        },
+        "supportive": {
+          "n": 16,
+          "correct": 16,
+          "invalid": 0
+        },
+        "misleading": {
+          "n": 16,
+          "correct": 2,
+          "invalid": 0
+        }
+      },
+      "nll_increased_rate": 0.25,
+      "epsilon_bound_ok_rate": 1.0
+    },
+    "pgd": {
+      "by_condition": {
+        "neutral": {
+          "n": 16,
+          "correct": 0,
+          "invalid": 1
+        },
+        "supportive": {
+          "n": 16,
+          "correct": 7,
+          "invalid": 2
+        },
+        "misleading": {
+          "n": 16,
+          "correct": 0,
+          "invalid": 2
+        }
+      },
+      "nll_increased_rate": 1.0,
+      "epsilon_bound_ok_rate": 1.0
+    }
+  },
+  "results": [
+    {
+      "image_id": "item_000",
+      "task": "color",
+      "color": "red",
+      "shape": "circle",
+      "attacks": [
+        {
+          "attack": "clean",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.2552293837070465,
+          "adv_nll": 0.2552293837070465,
+          "nll_increased": false,
+          "linf": 0.0,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.0,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is blue.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 2923.8,
+            "current_allocated_mb": 1966.4
+          },
+          "rss_mb": 570.4
+        },
+        {
+          "attack": "noise",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.2552293837070465,
+          "adv_nll": 0.16129010915756226,
+          "nll_increased": false,
+          "linf": 0.03137242794036865,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.002,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is blue.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 2923.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 571.4
+        },
+        {
+          "attack": "fgsm",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.2552293837070465,
+          "adv_nll": 0.2774885296821594,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 4.137,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is blue.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4059.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 600.7
+        },
+        {
+          "attack": "pgd",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.2552293837070465,
+          "adv_nll": 2.9297707080841064,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 27.925,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "yellow",
+              "parsed_answer": "yellow",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is blue.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4067.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 605.7
+        }
+      ]
+    },
+    {
+      "image_id": "item_000",
+      "task": "shape",
+      "color": "red",
+      "shape": "circle",
+      "attacks": [
+        {
+          "attack": "clean",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 0.09853393584489822,
+          "adv_nll": 0.09853393584489822,
+          "nll_increased": false,
+          "linf": 0.0,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.0,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle.",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4067.8,
+            "current_allocated_mb": 1966.4
+          },
+          "rss_mb": 605.8
+        },
+        {
+          "attack": "noise",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 0.09853393584489822,
+          "adv_nll": 0.08771837502717972,
+          "nll_increased": false,
+          "linf": 0.0313723087310791,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.003,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle.",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4067.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 606.1
+        },
+        {
+          "attack": "fgsm",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 0.09853393584489822,
+          "adv_nll": 0.1974562108516693,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 3.922,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle.",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4067.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 606.5
+        },
+        {
+          "attack": "pgd",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 0.09853393584489822,
+          "adv_nll": 1.6387829780578613,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 28.115,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "star",
+              "parsed_answer": "star",
+              "expected": "circle",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle.",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "square.",
+              "parsed_answer": "square",
+              "expected": "circle",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 606.8
+        }
+      ]
+    },
+    {
+      "image_id": "item_001",
+      "task": "color",
+      "color": "red",
+      "shape": "circle",
+      "attacks": [
+        {
+          "attack": "clean",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.29140058159828186,
+          "adv_nll": 0.29140058159828186,
+          "nll_increased": false,
+          "linf": 0.0,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.0,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is green.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "green",
+              "parsed_answer": "green",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1966.4
+          },
+          "rss_mb": 606.9
+        },
+        {
+          "attack": "noise",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.29140058159828186,
+          "adv_nll": 0.16480140388011932,
+          "nll_increased": false,
+          "linf": 0.03137248754501343,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.002,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is green.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "green",
+              "parsed_answer": "green",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 606.9
+        },
+        {
+          "attack": "fgsm",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.29140058159828186,
+          "adv_nll": 0.3916358947753906,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 4.139,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is green.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "green",
+              "parsed_answer": "green",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 607.2
+        },
+        {
+          "attack": "pgd",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.29140058159828186,
+          "adv_nll": 3.7630372047424316,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 29.369,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "Answer: blue",
+              "parsed_answer": null,
+              "expected": "red",
+              "correct": false,
+              "invalid": true
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "Answer: red",
+              "parsed_answer": null,
+              "expected": "red",
+              "correct": false,
+              "invalid": true
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is green.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "Answer: green",
+              "parsed_answer": null,
+              "expected": "red",
+              "correct": false,
+              "invalid": true
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 607.5
+        }
+      ]
+    },
+    {
+      "image_id": "item_001",
+      "task": "shape",
+      "color": "red",
+      "shape": "circle",
+      "attacks": [
+        {
+          "attack": "clean",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 0.14247000217437744,
+          "adv_nll": 0.14247000217437744,
+          "nll_increased": false,
+          "linf": 0.0,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.0,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a triangle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "triangle.",
+              "parsed_answer": "triangle",
+              "expected": "circle",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1966.4
+          },
+          "rss_mb": 607.6
+        },
+        {
+          "attack": "noise",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 0.14247000217437744,
+          "adv_nll": 0.10799980163574219,
+          "nll_increased": false,
+          "linf": 0.03137248754501343,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.004,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a triangle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "triangle.",
+              "parsed_answer": "triangle",
+              "expected": "circle",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 608.1
+        },
+        {
+          "attack": "fgsm",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 0.14247000217437744,
+          "adv_nll": 0.23938700556755066,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 4.75,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a triangle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "triangle.",
+              "parsed_answer": "triangle",
+              "expected": "circle",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 608.3
+        },
+        {
+          "attack": "pgd",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 0.14247000217437744,
+          "adv_nll": 1.7368929386138916,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 34.651,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "star",
+              "parsed_answer": "star",
+              "expected": "circle",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle.",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a triangle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "triangle.",
+              "parsed_answer": "triangle",
+              "expected": "circle",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 608.8
+        }
+      ]
+    },
+    {
+      "image_id": "item_002",
+      "task": "color",
+      "color": "red",
+      "shape": "circle",
+      "attacks": [
+        {
+          "attack": "clean",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.2329443246126175,
+          "adv_nll": 0.2329443246126175,
+          "nll_increased": false,
+          "linf": 0.0,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.0,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is yellow.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "yellow.",
+              "parsed_answer": "yellow",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1966.4
+          },
+          "rss_mb": 608.8
+        },
+        {
+          "attack": "noise",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.2329443246126175,
+          "adv_nll": 0.1405344009399414,
+          "nll_increased": false,
+          "linf": 0.03137242794036865,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.005,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is yellow.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "yellow.",
+              "parsed_answer": "yellow",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 608.9
+        },
+        {
+          "attack": "fgsm",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.2329443246126175,
+          "adv_nll": 0.3040957748889923,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 5.261,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is yellow.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "yellow.",
+              "parsed_answer": "yellow",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 609.0
+        },
+        {
+          "attack": "pgd",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.2329443246126175,
+          "adv_nll": 3.1229543685913086,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 37.102,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "The answer is red",
+              "parsed_answer": null,
+              "expected": "red",
+              "correct": false,
+              "invalid": true
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is yellow.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "The answer is yellow",
+              "parsed_answer": null,
+              "expected": "red",
+              "correct": false,
+              "invalid": true
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 609.2
+        }
+      ]
+    },
+    {
+      "image_id": "item_002",
+      "task": "shape",
+      "color": "red",
+      "shape": "circle",
+      "attacks": [
+        {
+          "attack": "clean",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 0.09572604298591614,
+          "adv_nll": 0.09572604298591614,
+          "nll_increased": false,
+          "linf": 0.0,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.0,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a star.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "star",
+              "parsed_answer": "star",
+              "expected": "circle",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1966.4
+          },
+          "rss_mb": 609.2
+        },
+        {
+          "attack": "noise",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 0.09572604298591614,
+          "adv_nll": 0.07582230865955353,
+          "nll_increased": false,
+          "linf": 0.03137233853340149,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.002,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a star.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "star",
+              "parsed_answer": "star",
+              "expected": "circle",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 609.2
+        },
+        {
+          "attack": "fgsm",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 0.09572604298591614,
+          "adv_nll": 0.2248700112104416,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 5.242,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a star.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "star",
+              "parsed_answer": "star",
+              "expected": "circle",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 609.3
+        },
+        {
+          "attack": "pgd",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 0.09572604298591614,
+          "adv_nll": 3.0252630710601807,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 36.248,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "star",
+              "parsed_answer": "star",
+              "expected": "circle",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "star",
+              "parsed_answer": "star",
+              "expected": "circle",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a star.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "star",
+              "parsed_answer": "star",
+              "expected": "circle",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 609.5
+        }
+      ]
+    },
+    {
+      "image_id": "item_003",
+      "task": "color",
+      "color": "red",
+      "shape": "circle",
+      "attacks": [
+        {
+          "attack": "clean",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.30297914147377014,
+          "adv_nll": 0.30297914147377014,
+          "nll_increased": false,
+          "linf": 0.0,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.0,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is blue.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1966.4
+          },
+          "rss_mb": 609.5
+        },
+        {
+          "attack": "noise",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.30297914147377014,
+          "adv_nll": 0.17289483547210693,
+          "nll_increased": false,
+          "linf": 0.03137242794036865,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.002,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is blue.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 609.6
+        },
+        {
+          "attack": "fgsm",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.30297914147377014,
+          "adv_nll": 0.25613516569137573,
+          "nll_increased": false,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 5.13,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is blue.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 609.6
+        },
+        {
+          "attack": "pgd",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.30297914147377014,
+          "adv_nll": 3.0341434478759766,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 36.071,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is blue.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 609.7
+        }
+      ]
+    },
+    {
+      "image_id": "item_003",
+      "task": "shape",
+      "color": "red",
+      "shape": "circle",
+      "attacks": [
+        {
+          "attack": "clean",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 0.1678796112537384,
+          "adv_nll": 0.1678796112537384,
+          "nll_increased": false,
+          "linf": 0.0,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.0,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle.",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1966.4
+          },
+          "rss_mb": 610.7
+        },
+        {
+          "attack": "noise",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 0.1678796112537384,
+          "adv_nll": 0.10589481890201569,
+          "nll_increased": false,
+          "linf": 0.03137236833572388,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.002,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 610.7
+        },
+        {
+          "attack": "fgsm",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 0.1678796112537384,
+          "adv_nll": 0.21658532321453094,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 5.201,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle.",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 610.7
+        },
+        {
+          "attack": "pgd",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 0.1678796112537384,
+          "adv_nll": 0.950550377368927,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 36.245,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "star",
+              "parsed_answer": "star",
+              "expected": "circle",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "circle",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "square.",
+              "parsed_answer": "square",
+              "expected": "circle",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 610.8
+        }
+      ]
+    },
+    {
+      "image_id": "item_006",
+      "task": "color",
+      "color": "red",
+      "shape": "square",
+      "attacks": [
+        {
+          "attack": "clean",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.4910968244075775,
+          "adv_nll": 0.4910968244075775,
+          "nll_increased": false,
+          "linf": 0.0,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.0,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is blue.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1966.4
+          },
+          "rss_mb": 610.8
+        },
+        {
+          "attack": "noise",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.4910968244075775,
+          "adv_nll": 0.4300987124443054,
+          "nll_increased": false,
+          "linf": 0.03137248754501343,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.003,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is blue.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 610.8
+        },
+        {
+          "attack": "fgsm",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.4910968244075775,
+          "adv_nll": 0.8155821561813354,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 5.238,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is blue.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 610.8
+        },
+        {
+          "attack": "pgd",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.4910968244075775,
+          "adv_nll": 3.1807260513305664,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 36.832,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is blue.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 610.9
+        }
+      ]
+    },
+    {
+      "image_id": "item_006",
+      "task": "shape",
+      "color": "red",
+      "shape": "square",
+      "attacks": [
+        {
+          "attack": "clean",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 1.0314290523529053,
+          "adv_nll": 1.0314290523529053,
+          "nll_increased": false,
+          "linf": 0.0,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.0,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "square.",
+              "parsed_answer": "square",
+              "expected": "square",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a triangle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "triangle.",
+              "parsed_answer": "triangle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1966.4
+          },
+          "rss_mb": 610.9
+        },
+        {
+          "attack": "noise",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 1.0314290523529053,
+          "adv_nll": 1.1274518966674805,
+          "nll_increased": true,
+          "linf": 0.03137248754501343,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.001,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "square.",
+              "parsed_answer": "square",
+              "expected": "square",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a triangle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "triangle.",
+              "parsed_answer": "triangle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.0
+        },
+        {
+          "attack": "fgsm",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 1.0314290523529053,
+          "adv_nll": 1.3389017581939697,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 5.34,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "square.",
+              "parsed_answer": "square",
+              "expected": "square",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a triangle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "triangle.",
+              "parsed_answer": "triangle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.0
+        },
+        {
+          "attack": "pgd",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 1.0314290523529053,
+          "adv_nll": 4.537069320678711,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 36.888,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle.",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a triangle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "triangle.",
+              "parsed_answer": "triangle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.1
+        }
+      ]
+    },
+    {
+      "image_id": "item_007",
+      "task": "color",
+      "color": "red",
+      "shape": "square",
+      "attacks": [
+        {
+          "attack": "clean",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.6018546223640442,
+          "adv_nll": 0.6018546223640442,
+          "nll_increased": false,
+          "linf": 0.0,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.0,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is green.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "green",
+              "parsed_answer": "green",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1966.4
+          },
+          "rss_mb": 611.1
+        },
+        {
+          "attack": "noise",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.6018546223640442,
+          "adv_nll": 0.46728554368019104,
+          "nll_increased": false,
+          "linf": 0.031372517347335815,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.001,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is green.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "green",
+              "parsed_answer": "green",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.1
+        },
+        {
+          "attack": "fgsm",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.6018546223640442,
+          "adv_nll": 0.6398741602897644,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 5.426,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is green.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "green",
+              "parsed_answer": "green",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.1
+        },
+        {
+          "attack": "pgd",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.6018546223640442,
+          "adv_nll": 2.91979718208313,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 37.205,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "yellow",
+              "parsed_answer": "yellow",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is green.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "green",
+              "parsed_answer": "green",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.1
+        }
+      ]
+    },
+    {
+      "image_id": "item_007",
+      "task": "shape",
+      "color": "red",
+      "shape": "square",
+      "attacks": [
+        {
+          "attack": "clean",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 1.2790638208389282,
+          "adv_nll": 1.2790638208389282,
+          "nll_increased": false,
+          "linf": 0.0,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.0,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "square.",
+              "parsed_answer": "square",
+              "expected": "square",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a star.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "star.",
+              "parsed_answer": "star",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1966.4
+          },
+          "rss_mb": 611.2
+        },
+        {
+          "attack": "noise",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 1.2790638208389282,
+          "adv_nll": 1.1557281017303467,
+          "nll_increased": false,
+          "linf": 0.0313723087310791,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.004,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "square.",
+              "parsed_answer": "square",
+              "expected": "square",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a star.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "star",
+              "parsed_answer": "star",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.2
+        },
+        {
+          "attack": "fgsm",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 1.2790638208389282,
+          "adv_nll": 1.8998172283172607,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 5.267,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "square.",
+              "parsed_answer": "square",
+              "expected": "square",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a star.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "star",
+              "parsed_answer": "star",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.2
+        },
+        {
+          "attack": "pgd",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 1.2790638208389282,
+          "adv_nll": 6.313092231750488,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 37.95,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle.",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a star.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "star.",
+              "parsed_answer": "star",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.3
+        }
+      ]
+    },
+    {
+      "image_id": "item_008",
+      "task": "color",
+      "color": "red",
+      "shape": "square",
+      "attacks": [
+        {
+          "attack": "clean",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.6708592772483826,
+          "adv_nll": 0.6708592772483826,
+          "nll_increased": false,
+          "linf": 0.0,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.0,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is yellow.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "yellow.",
+              "parsed_answer": "yellow",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1966.4
+          },
+          "rss_mb": 611.3
+        },
+        {
+          "attack": "noise",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.6708592772483826,
+          "adv_nll": 0.48063164949417114,
+          "nll_increased": false,
+          "linf": 0.0313723087310791,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.003,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is yellow.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "yellow",
+              "parsed_answer": "yellow",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.3
+        },
+        {
+          "attack": "fgsm",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.6708592772483826,
+          "adv_nll": 0.7220219969749451,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 5.592,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is yellow.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "yellow.",
+              "parsed_answer": "yellow",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.3
+        },
+        {
+          "attack": "pgd",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.6708592772483826,
+          "adv_nll": 2.192779779434204,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 37.778,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is yellow.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "yellow.",
+              "parsed_answer": "yellow",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.4
+        }
+      ]
+    },
+    {
+      "image_id": "item_008",
+      "task": "shape",
+      "color": "red",
+      "shape": "square",
+      "attacks": [
+        {
+          "attack": "clean",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 1.1097040176391602,
+          "adv_nll": 1.1097040176391602,
+          "nll_increased": false,
+          "linf": 0.0,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.0,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "square.",
+              "parsed_answer": "square",
+              "expected": "square",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1966.4
+          },
+          "rss_mb": 611.4
+        },
+        {
+          "attack": "noise",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 1.1097040176391602,
+          "adv_nll": 1.2567371129989624,
+          "nll_increased": true,
+          "linf": 0.031372398138046265,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.004,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "square.",
+              "parsed_answer": "square",
+              "expected": "square",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.4
+        },
+        {
+          "attack": "fgsm",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 1.1097040176391602,
+          "adv_nll": 1.5589191913604736,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 5.441,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "square.",
+              "parsed_answer": "square",
+              "expected": "square",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.4
+        },
+        {
+          "attack": "pgd",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 1.1097040176391602,
+          "adv_nll": 8.637948036193848,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 37.962,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "star.",
+              "parsed_answer": "star",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "star.",
+              "parsed_answer": "star",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a circle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "star.",
+              "parsed_answer": "star",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.4
+        }
+      ]
+    },
+    {
+      "image_id": "item_009",
+      "task": "color",
+      "color": "red",
+      "shape": "square",
+      "attacks": [
+        {
+          "attack": "clean",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.6460019946098328,
+          "adv_nll": 0.6460019946098328,
+          "nll_increased": false,
+          "linf": 0.0,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.0,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is blue.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1966.4
+          },
+          "rss_mb": 611.5
+        },
+        {
+          "attack": "noise",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.6460019946098328,
+          "adv_nll": 0.6726977825164795,
+          "nll_increased": true,
+          "linf": 0.0313720703125,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.002,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is blue.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.5
+        },
+        {
+          "attack": "fgsm",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.6460019946098328,
+          "adv_nll": 0.9942334890365601,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 7.177,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "red",
+              "parsed_answer": "red",
+              "expected": "red",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is blue.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.5
+        },
+        {
+          "attack": "pgd",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+          "clean_nll": 0.6460019946098328,
+          "adv_nll": 3.545224189758301,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 38.862,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is red.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is blue.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+              "raw_answer": "blue",
+              "parsed_answer": "blue",
+              "expected": "red",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.5
+        }
+      ]
+    },
+    {
+      "image_id": "item_009",
+      "task": "shape",
+      "color": "red",
+      "shape": "square",
+      "attacks": [
+        {
+          "attack": "clean",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 1.1455880403518677,
+          "adv_nll": 1.1455880403518677,
+          "nll_increased": false,
+          "linf": 0.0,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.0,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "square.",
+              "parsed_answer": "square",
+              "expected": "square",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a triangle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "triangle.",
+              "parsed_answer": "triangle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1966.4
+          },
+          "rss_mb": 611.5
+        },
+        {
+          "attack": "noise",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 1.1455880403518677,
+          "adv_nll": 1.2969536781311035,
+          "nll_increased": true,
+          "linf": 0.031372249126434326,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 0.009,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "square.",
+              "parsed_answer": "square",
+              "expected": "square",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a triangle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "triangle.",
+              "parsed_answer": "triangle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.6
+        },
+        {
+          "attack": "fgsm",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 1.1455880403518677,
+          "adv_nll": 1.83186674118042,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 7.256,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "square",
+              "parsed_answer": "square",
+              "expected": "square",
+              "correct": true,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a triangle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "triangle",
+              "parsed_answer": "triangle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.6
+        },
+        {
+          "attack": "pgd",
+          "optimize_condition": "neutral",
+          "optimize_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+          "clean_nll": 1.1455880403518677,
+          "adv_nll": 5.827725410461426,
+          "nll_increased": true,
+          "linf": 0.0313725471496582,
+          "epsilon": 0.031372549,
+          "within_epsilon": true,
+          "pixels_in_unit_interval": true,
+          "attack_seconds": 46.584,
+          "evaluations": [
+            {
+              "condition": "neutral",
+              "prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "star.",
+              "parsed_answer": "star",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "supportive",
+              "prompt": "Context: The large central figure is a square.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "circle.",
+              "parsed_answer": "circle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            },
+            {
+              "condition": "misleading",
+              "prompt": "Context: The large central figure is a triangle.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+              "raw_answer": "triangle.",
+              "parsed_answer": "triangle",
+              "expected": "square",
+              "correct": false,
+              "invalid": false
+            }
+          ],
+          "mps": {
+            "driver_allocated_mb": 4075.8,
+            "current_allocated_mb": 1967.1
+          },
+          "rss_mb": 611.6
+        }
+      ]
+    }
+  ]
+}

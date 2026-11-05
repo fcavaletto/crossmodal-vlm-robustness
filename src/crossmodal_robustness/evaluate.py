@@ -36,11 +36,19 @@ def load_model(model_id: str, device: str):
     from transformers import AutoModelForImageTextToText, AutoProcessor
 
     processor = AutoProcessor.from_pretrained(model_id)
-    model = AutoModelForImageTextToText.from_pretrained(
-        model_id,
-        torch_dtype=torch.float32,
-        attn_implementation="eager",
-    ).to(device)
+    # Prefer `dtype=` (Transformers >=5); fall back for older releases.
+    try:
+        model = AutoModelForImageTextToText.from_pretrained(
+            model_id,
+            dtype=torch.float32,
+            attn_implementation="eager",
+        ).to(device)
+    except TypeError:
+        model = AutoModelForImageTextToText.from_pretrained(
+            model_id,
+            torch_dtype=torch.float32,
+            attn_implementation="eager",
+        ).to(device)
     model.eval()
     return processor, model
 

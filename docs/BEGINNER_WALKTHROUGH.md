@@ -87,8 +87,7 @@ be \(+1\). The primary DiD compares *additional* errors. A low clean misleading
 accuracy is therefore not proof that attacks got worse under conflict—it is a
 **ceiling on how much additional misleading error you can even see**.
 
-(The “suppose 28 of 32 are already wrong” story above is the same idea stated as
-an illustration; the measured held-out floor is the 4/32 figure.)
+In fact, **28 of the 32** held-out color questions were already answered incorrectly under misleading text, so at most four could acquire a *new* error from an image attack in that condition.
 
 ## Uncertainty without a GPU
 

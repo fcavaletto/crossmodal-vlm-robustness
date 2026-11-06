@@ -22,6 +22,8 @@
 
 **Rigor note.** Primary vs secondary analyses were **frozen after Phase D development and before held-out**—not independently preregistered before all exploration. Chronology and the original hypothesis are preserved; we report the negative primary finding rather than rewriting the question. Historical Phase A–E logs stay immutable.
 
+**Also explicit:** small \(n\) (32 test / 64 dev), many reported cells without formal multiplicity correction, synthetic stimuli only, some non-monotonic ASR vs ε, and **no mechanistic evidence** that supportive text “defends” beyond the paired error contrast (answer-copying is a plausible untested mechanism). Details: technical report §9.
+
 ## Quick start (MacBook Air M4, 24 GB; PyTorch MPS)
 
 ```bash
@@ -31,26 +33,29 @@ python -m pip install -e '.[dev,plot]'
 python -m pytest -q
 ```
 
+### Re-check published statistics on a fresh clone (no GPU, no `results/`)
+
+Committed compact prediction tables + metrics JSON are enough:
+
+```bash
+python -m crossmodal_robustness.verify_published
+```
+
+This rebuilds accuracy / ASR / additional error / DiD (+ bootstrap CIs) from
+`reports/artifacts/*_predictions_compact.jsonl` and compares them to
+`reports/phase-e-heldout-metrics.json` and `reports/phase-d-full64-metrics.json`.
+Exit code 0 means the published numbers match. **Do not** require gitignored
+`results/*.jsonl` for this check.
+
 Dry-run prompts (no weights):
 
 ```bash
 python -m crossmodal_robustness.evaluate --dry-run --task both --max-examples 2
 ```
 
-Reproduce **analysis only** from committed metrics (no inference):
-
-```bash
-python -m crossmodal_robustness.heldout_analyze \
-  --jsonl results/phase_e_heldout.jsonl \
-  --development-metrics reports/phase-d-full64-metrics.json \
-  --output /tmp/phase_e_metrics_recheck.json \
-  --figure-dir /tmp/phase-e-figs \
-  --skip-plots
-```
-
-(`results/phase_e_heldout.jsonl` is local/gitignored; if absent, use committed `reports/phase-e-heldout-metrics.json` and the compact tables under `reports/artifacts/`.)
-
-Full held-out **inference** re-run is expensive (~3 h on the recording host) and was a one-shot under freeze—see [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md). Do not retune after seeing test numbers.
+Full held-out **inference** re-run is expensive (~3 h on the recording host) and
+was a one-shot under freeze—see [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md).
+Do not retune after seeing test numbers.
 
 ## Newcomer path
 
@@ -74,8 +79,10 @@ Full held-out **inference** re-run is expensive (~3 h on the recording host) and
 | Frozen protocol | [`docs/PROTOCOL.md`](docs/PROTOCOL.md) |
 | Freeze pins | [`docs/freeze-config.md`](docs/freeze-config.md) |
 | Reproducibility | [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md) |
+| Beginner walkthrough | [`docs/BEGINNER_WALKTHROUGH.md`](docs/BEGINNER_WALKTHROUGH.md) |
+| Consolidation / tip PR | [`docs/CONSOLIDATION.md`](docs/CONSOLIDATION.md) |
 | Phase E verification | [`reports/phase-e-verification.md`](reports/phase-e-verification.md) |
-| Artifact checksums | [`reports/artifacts/`](reports/artifacts/) |
+| Artifact checksums + compact predictions | [`reports/artifacts/`](reports/artifacts/) |
 
 Default model: [`HuggingFaceTB/SmolVLM2-500M-Video-Instruct`](https://huggingface.co/HuggingFaceTB/SmolVLM2-500M-Video-Instruct) (weights not redistributed; pin revision `7b375e1b73b11138ff12fe22c8f2822d8fe03467`).
 

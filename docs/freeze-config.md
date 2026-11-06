@@ -131,7 +131,9 @@ dev_eval: python -m crossmodal_robustness.phase_d_eval --subset all --no-do-imag
 analyze: python -m crossmodal_robustness.phase_d_analyze --jsonl results/phase_d_full64.jsonl
 heldout_validate: python -m crossmodal_robustness.heldout_eval --validate-only
 heldout_eval: python -m crossmodal_robustness.heldout_eval --i-authorize-heldout-oneshot ...  # see docs/pre-test-addendum-2026-11-05.md
-heldout_analyze: python -m crossmodal_robustness.heldout_analyze --jsonl results/phase_e_heldout.jsonl --development-metrics reports/phase-d-full64-metrics.json
+heldout_analyze: python -m crossmodal_robustness.heldout_analyze --jsonl results/phase_e_heldout.jsonl --development-metrics reports/phase-d-full64-metrics.json  # local JSONL; optional
+verify_published: python -m crossmodal_robustness.verify_published  # fresh-clone offline re-check from reports/artifacts/
 tests: python -m pytest -q
 pre_test_addendum: docs/pre-test-addendum-2026-11-05.md
 ```
+

@@ -64,6 +64,22 @@ class PhaseFDocConsistencyTests(unittest.TestCase):
     def test_readme_no_longer_claims_no_model_run(self):
         self.assertNotIn("No VLM model run or adversarial result is claimed yet", self.readme)
         self.assertIn("does **not** support the amplification claim", self.readme)
+        self.assertIn("verify_published", self.readme)
+        self.assertNotIn(
+            "heldout_analyze \\\n  --jsonl results/phase_e_heldout.jsonl",
+            self.readme,
+        )
+
+    def test_report_uses_mean_token_nll(self):
+        self.assertIn(r"-\frac{1}{L}\sum", self.report)
+        self.assertNotIn(
+            r"\mathcal{L}(x;c,y^\star)=-\sum_{\ell=1}^{L}",
+            self.report,
+        )
+        self.assertIn("small", self.report.lower())
+        self.assertIn("multiple comparisons", self.report.lower())
+        self.assertIn("non-monotonic", self.report.lower())
+        self.assertIn("no mechanistic evidence", self.report.lower())
 
     def test_protocol_still_frozen_not_rewritten(self):
         protocol = (ROOT / "docs/PROTOCOL.md").read_text(encoding="utf-8")

@@ -1,22 +1,69 @@
 # Reproducibility and educational guide
 
-This document explains **how the frozen study was run** and how a newcomer can re-check numbers **without inventing observations**. Phase F does not re-run model inference.
+This document explains **how the frozen study was run** and how a **fresh clone**
+can re-check published numbers **without** gitignored `results/*.jsonl` files and
+**without** model inference.
 
-Companion beginner narrative: [`BEGINNER_WALKTHROUGH.md`](BEGINNER_WALKTHROUGH.md).
+Companion: [`BEGINNER_WALKTHROUGH.md`](BEGINNER_WALKTHROUGH.md).
 
 ---
 
 ## 1. Conceptual walkthrough
 
-1. **Stimuli.** Each PNG has a known color and shape. Prompts attach a neutral, supportive, or misleading context sentence, then ask for color or shape.  
+1. **Stimuli.** Each PNG has a known color and shape. Prompts attach neutral,
+   supportive, or misleading context, then ask for color or shape.  
 2. **Clean eval.** Generate a short answer; strict parser → correct / incorrect / invalid.  
-3. **Attack.** Under the **neutral** prompt, ascend teacher-forced NLL of the correct leading-space answer tokens w.r.t. pixels (FGSM or PGD), or add equal-budget noise.  
+3. **Attack.** Under the **neutral** prompt, ascend **mean** teacher-forced NLL of
+   the correct leading-space answer tokens w.r.t. pixels (FGSM or PGD), or add
+   equal-budget noise.  
 4. **Paired eval.** Reuse the **same** perturbed image under all three contexts.  
-5. **Estimands.** Additional error \(\Delta = e_{\mathrm{adv}}-e_{\mathrm{clean}}\). Primary DiD averages \(\Delta_{\mathrm{mis}}-\Delta_{\mathrm{sup}}\) over images; secondary uses neutral instead of misleading. Bootstrap images for CIs.
+5. **Estimands.** Additional error \(\Delta = e_{\mathrm{adv}}-e_{\mathrm{clean}}\).
+   Primary DiD averages \(\Delta_{\mathrm{mis}}-\Delta_{\mathrm{sup}}\) over images;
+   secondary uses neutral instead of misleading. Bootstrap images for CIs.
 
 ---
 
-## 2. Environment (recording host)
+## 2. Fresh clone: re-check main statistics (no GPU, no `results/`)
+
+Committed inputs:
+
+| Path | Role |
+| --- | --- |
+| `reports/artifacts/phase_e_heldout_predictions_compact.jsonl` | Flattened held-out predictions (1920 rows) |
+| `reports/artifacts/phase_d_full64_predictions_compact.jsonl` | Flattened development predictions (3840 rows) |
+| `reports/phase-e-heldout-metrics.json` | Published held-out aggregates (+ side-by-side) |
+| `reports/phase-d-full64-metrics.json` | Published development aggregates |
+| `reports/artifacts/checksums.json` | SHA-256 records |
+
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e '.[dev,plot]'
+python -m pytest -q
+python -m crossmodal_robustness.verify_published
+```
+
+`verify_published` rebuilds accuracy, conditional ASR, additional error, and DiD
+(+ bootstrap CIs with seed `20261105`, \(B=2000\)) from the compact tables and
+compares them to the published metrics JSON. Exit code 0 means match.
+
+Optional: inspect published tables directly
+
+```bash
+python - <<'PY'
+import json
+m=json.load(open("reports/phase-e-heldout-metrics.json"))
+print("heldout floor", m["heldout"]["floor_effect_color_misleading"])
+print("primary PGD ε=8 color", m["did_side_by_side"]["pgd|0.03137255|color|mis_vs_sup"]["heldout"])
+PY
+```
+
+**Do not** require `results/phase_e_heldout.jsonl` for statistic re-checks. That
+path is gitignored. Compact tables + metrics JSON are the portable record.
+
+---
+
+## 3. Environment (recording host)
 
 | Pin | Value |
 | --- | --- |
@@ -31,22 +78,16 @@ Companion beginner narrative: [`BEGINNER_WALKTHROUGH.md`](BEGINNER_WALKTHROUGH.m
 | ε | 2/255, 4/255, 8/255 |
 | PGD | 7 steps, α=ε/4, random_start=false |
 | Splitting | `do_image_splitting=False` |
-
-Install:
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -e '.[dev,plot]'
-python -m pytest -q
-```
+| Attack loss | Mean token NLL (`model(...).loss` on answer labels) |
 
 ---
 
-## 3. Exact commands (as used)
+## 4. Exact inference commands (historical; already executed)
 
-### 3.1 Development (Phase D; already executed)
+These reproduce **observations** only if you intentionally re-run the one-shot
+(expensive; not part of Phase F / Study 1 revisions). Prefer §2 for statistics.
+
+### 4.1 Development (Phase D)
 
 ```bash
 python -m crossmodal_robustness.phase_d_eval \
@@ -63,7 +104,7 @@ python -m crossmodal_robustness.phase_d_eval \
 
 Wall ≈ **15853 s** (`reports/phase-d-full64-meta.json`).
 
-### 3.2 Held-out one-shot (Phase E; already executed)
+### 4.2 Held-out one-shot (Phase E)
 
 ```bash
 python -m crossmodal_robustness.heldout_eval \
@@ -80,58 +121,53 @@ python -m crossmodal_robustness.heldout_eval \
   --i-authorize-heldout-oneshot
 ```
 
-Wall ≈ **11149 s** (`reports/phase-e-heldout-meta.json`). Peak MPS memory on the order of ~4 GB in Phase D logs.
-
-### 3.3 Analyze (no attack craft)
-
-```bash
-python -m crossmodal_robustness.heldout_analyze \
-  --jsonl results/phase_e_heldout.jsonl \
-  --development-metrics reports/phase-d-full64-metrics.json \
-  --output results/phase_e_heldout_metrics.json \
-  --figure-dir reports/figures/phase-e
-```
+Wall ≈ **11149 s** (`reports/phase-e-heldout-meta.json`). Peak MPS memory ~4 GB
+in Phase D logs.
 
 ---
 
-## 4. Outputs and what is committed
+## 5. Outputs: committed vs local
 
-| Path | Committed? | Role |
+| Path | In git? | Role |
 | --- | --- | --- |
-| `results/phase_d_full64.jsonl` | **No** (gitignored) | Full development predictions |
-| `results/phase_e_heldout.jsonl` | **No** (gitignored) | Full held-out predictions |
-| `reports/phase-d-full64-metrics.json` | Yes | Development aggregate metrics |
-| `reports/phase-e-heldout-metrics.json` | Yes | Held-out + side-by-side |
-| `reports/artifacts/*_predictions_compact.jsonl` | Yes | Flattened prediction table derived from local JSONL |
-| `reports/artifacts/checksums.json` | Yes | SHA-256 of committed + derived artifacts |
-| `reports/artifacts/experiment_metadata.json` | Yes | Immutable experiment metadata |
+| `results/*.jsonl` | **No** | Full local prediction dumps |
+| `reports/phase-*-metrics.json` | Yes | Published aggregates |
+| `reports/artifacts/*_predictions_compact.jsonl` | Yes | Portable prediction tables |
+| `reports/artifacts/checksums.json` | Yes | Hashes |
+| `reports/artifacts/experiment_metadata.json` | Yes | Immutable metadata |
 
-**If a local `results/*.jsonl` file is missing:** say so and use committed metrics / compact tables. **Do not** regenerate observations for Phase F documentation. On this authoring host both JSONLs were present and hashed into `experiment_metadata.json`.
+If a local `results/*.jsonl` is missing on a fresh clone: **expected**. Use §2.
 
 ---
 
-## 5. Worked DiD + bootstrap (educational)
+## 6. Worked DiD + bootstrap
 
-See `reports/technical_report.md` §6.5 for `item_004` / color / PGD ε=8/255 from existing predictions:
-
-- \(\Delta_{\mathrm{neu}}=1\), \(\Delta_{\mathrm{sup}}=0\), \(\Delta_{\mathrm{mis}}=0\)  
-- Image contribution to primary DiD: \(0\); to secondary: \(1\).
-
-Bootstrap: draw 32 image indices with replacement, recompute the mean DiD, repeat 2000 times, take 2.5/97.5 percentiles (seed 20261105). Implementation: `crossmodal_robustness.phase_d_analyze.bootstrap_did`.
+See `docs/BEGINNER_WALKTHROUGH.md` §§3–5 and `reports/technical_report.md` §6.5
+(`item_004` / color / PGD ε=8/255).
 
 ---
 
-## 6. Process disclosures
+## 7. Process disclosures
 
 - Leading-space token fix after Phase B (`Ġred`).  
-- Revision verification hotfix `d1ef71e` (hub SHA) after attempt-1 abort.  
-- Noise seeds: MD5-stable `attack_noise_seed` (pre-test addendum); distribution unchanged vs Phase D, tensors not bit-identical.  
-- Held-out authorization required `--i-authorize-heldout-oneshot`.
+- Revision verification hotfix `d1ef71e` (hub SHA).  
+- Noise seeds: MD5-stable `attack_noise_seed` (pre-test addendum).  
+- Held-out requires `--i-authorize-heldout-oneshot`.  
+- Attack objective is **mean** token NLL (not sum); see technical report §6.2.
 
 ---
 
-## 7. What not to do
+## 8. Explicit caveats for readers
 
-- Do not change ε, steps, prompts, parser, preprocess, or primary estimand after seeing held-out numbers.  
+Small \(n\), multiple reported cells without formal multiplicity correction,
+synthetic domain only, possible non-monotonic ASR vs ε, and **no mechanistic
+evidence** for why supportive text helps — see technical report §9.
+
+---
+
+## 9. What not to do
+
+- Do not change ε, steps, prompts, parser, preprocess, or primary estimand after
+  seeing held-out numbers.  
 - Do not present secondary DiD as the original primary claim.  
-- Do not merge historical Phase A–D PRs separately if consolidating on the Phase F tip (editorial recommendation only; merge is Federico’s decision).
+- Do not merge historical Phase A–D PRs separately if consolidating on the Phase F tip.

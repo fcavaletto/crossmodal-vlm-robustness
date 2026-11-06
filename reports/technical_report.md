@@ -25,9 +25,19 @@ This project is a compact technical demonstration motivated by the AI4I / Polite
 
 ## 2. Background and related work
 
-Cross-modal robustness literature documents that vision–language models can fail under image perturbations and that prompts/architecture choices matter for robustness (e.g. Cui et al., CVPR 2024; Bhagwatkar et al., EMNLP 2024 Findings; Xie et al., CVPR 2025 on transfer-based attacks). Classic white-box L∞ attacks include FGSM (Goodfellow et al., 2015) and PGD (Madry et al., 2018). Difference-in-differences style contrasts are used here as a simple paired estimator of *context-conditional additional error*, not as an econometric identification claim about real-world interventions.
+### 2.1 Primary sources (verified citations)
 
-**What this paper is not:** a new attack algorithm, a large-scale benchmark, or a claim that supportive captions are a deployed defense.
+| Work | What it studies | How this study differs |
+| --- | --- | --- |
+| Goodfellow et al., ICLR 2015 (FGSM) | One-step L∞ signed-gradient attacks on classifiers | We use FGSM only as a **control** on a VLM answer-NLL objective with paired text contexts |
+| Madry et al., ICLR 2018 (PGD) | Multi-step projected gradient adversary / adversarial training | Same L∞ PGD *geometry*; here ascent is on **teacher-forced mean answer NLL** of a frozen VLM, not classifier CE with AT |
+| Cui et al., CVPR 2024 | Robustness of large multimodal models to **image** adversarial attacks | We fix a small open VLM + **synthetic** paired N/S/M text and estimate a **context DiD**, not broad LMM robustness leaderboards |
+| Bhagwatkar et al., Findings of EMNLP 2024 | Architecture and **prompt design** for VLM adversarial robustness | We do **not** redesign architecture or search prompts; prompts are frozen; text is an experimental factor, not a defense recipe |
+| Xie et al., CVPR 2025 (Chain of Attack) | Transfer-based attacks / robustness of VLMs | We study **white-box** attacks on the evaluation model only; no transfer / black-box chain |
+
+Classic white-box L∞ attacks (FGSM, PGD) supply the pixel threat model. Multimodal robustness papers above motivate *why* image attacks on VLMs matter. Our contribution is narrower and methodological: a **paired-context DiD** under a frozen no-split SmolVLM2 stack on sealed synthetic splits, with explicit negative-result reporting.
+
+**What this paper is not:** a new attack algorithm, a large-scale benchmark, a transfer-attack study, or a claim that supportive captions are a deployed defense.
 
 ---
 
@@ -101,11 +111,13 @@ For clean image \(x \in [0,1]^{C\times H\times W}\) and budget \(\varepsilon\),
 
 ### 6.2 Teacher-forced answer NLL (attack objective)
 
-Let \(y^\star\) be the correct label string tokenized with leading-space BPE pieces \(t_1,\ldots,t_L\) as emitted after `Assistant:`. With multimodal context \(c\) (image + prompt), the scalar loss is
+Let \(y^\star\) be the correct label string tokenized with leading-space BPE pieces \(t_1,\ldots,t_L\) as emitted after `Assistant:`. With multimodal context \(c\) (image + prompt), the implementation returns HuggingFace’s standard causal-LM loss on answer positions only (prompt tokens masked with `labels=-100`): the **mean** token NLL
 
 \[
-\mathcal{L}(x;c,y^\star)=-\sum_{\ell=1}^{L}\log p_\theta(t_\ell\mid t_{<\ell},c(x)).
+\mathcal{L}(x;c,y^\star)=-\frac{1}{L}\sum_{\ell=1}^{L}\log p_\theta(t_\ell\mid t_{<\ell},c(x)).
 \]
+
+This matches `teacher_forced_nll` → `model(..., labels=...).loss` in `crossmodal_robustness.gradient_gate` (docstring: “Mean NLL of the answer token sequence”). It is **not** a sum over tokens. For single-token labels (e.g. `Ġred`), mean and sum coincide; for multi-token labels (e.g. some shape spellings), the mean scales the scalar by \(1/L\). Sign(\(\nabla_x\mathcal{L}\)) for FGSM/PGD is unchanged by a positive constant factor, so the mean-vs-sum distinction does not change the attack update geometry, but reported NLL magnitudes must be read as **per-token averages**.
 
 Attacks **ascend** \(\mathcal{L}\) w.r.t. \(x\) (make the correct answer less likely under teacher forcing).
 
@@ -147,7 +159,7 @@ e_{i,c}^{\mathrm{clean}},\; e_{i,c}^{\mathrm{adv}}\in\{0,1\}
 
 ### 6.5 Worked single-image example (held-out, existing predictions)
 
-From `results/phase_e_heldout.jsonl` (local; compact mirror in `reports/artifacts/`), image `item_004`, task **color**, PGD \(\varepsilon=8/255\):
+From committed `reports/artifacts/phase_e_heldout_predictions_compact.jsonl` (derived from the held-out JSONL; no new inference), image `item_004`, task **color**, PGD \(\varepsilon=8/255\):
 
 | Condition | Clean parsed | Adv parsed | \(e^{\mathrm{clean}}\) | \(e^{\mathrm{adv}}\) | \(\Delta\) |
 | --- | --- | --- | --- | --- | --- |
@@ -238,6 +250,7 @@ Equal-budget noise remains near-null on DiD; FGSM is much weaker than PGD at the
 2. Misleading-color clean accuracy is very low on both splits (floor).
 3. Supportive context reduces additional PGD error relative to neutral (secondary DiD > 0 for color).
 4. PGD saturates neutral ASR near the top of the frozen grid already at small ε.
+5. Attack success is not always monotone in ε under greedy decoding (e.g. held-out color-neutral PGD conditional ASR 100% at ε=2/255 vs 93.1% at ε=8/255).
 
 **Inferences (limited)**
 
@@ -254,20 +267,28 @@ Equal-budget noise remains near-null on DiD; FGSM is much weaker than PGD at the
 
 ---
 
-## 9. Limitations
+## 9. Limitations (explicit)
 
-1. Synthetic geometric domain — limited external validity.  
-2. Misleading-color floor undermines primary amplification identification.  
-3. Supportive context may enable answer copying.  
-4. PGD saturation / weak dose–response on neutral ASR at ε=2/255.  
-5. Shared images across tasks → non-independence across task analyses.  
-6. Possible LANCZOS vs BICUBIC preprocess discrepancy (accepted, not tuned).  
-7. Strict parser: many PGD failures are invalids.  
-8. Opt@neutral only.  
-9. Single primary model.  
-10. Phase B bare-token NLL erratum (corrected thereafter).  
-11. Noise seeds at Phase E use MD5-stable derivation (distribution preserved; tensors not bit-identical to Phase D noise).  
-12. Freeze hierarchy set after development exploration (honest chronology).
+### 9.1 Statistical and design limits
+
+1. **Small \(n\):** held-out DiDs use **32** images per task; development uses **64**. Bootstrap CIs are wide; several shape secondary CIs include 0.  
+2. **Multiple comparisons:** we report many ε × task × contrast × attack cells. The freeze hierarchy (primary mis−sup; secondary neu−sup) constrains *interpretation priority*, but it does **not** provide formal multiplicity-adjusted α control. Treat non-primary cells as descriptive.  
+3. **Synthetic data only:** Pillow geometric figures; no claim about photographs, charts, or UI screenshots.  
+4. **Non-monotonic attack strength:** some held-out ASR / accuracy cells are not monotone in ε (e.g. color-neutral PGD conditional ASR is 100% at ε=2/255 and **93.1%** at ε=8/255). Do not assume larger ε always yields stronger empirical attack success under greedy decoding + strict parser.  
+5. **No mechanistic evidence:** we do **not** provide attention maps, representation analyses, or causal interventions that would explain *why* supportive text helps. Answer-copying remains a plausible untested mechanism.
+
+### 9.2 Measurement and process limits
+
+6. Misleading-color floor undermines primary amplification identification.  
+7. Supportive context may enable answer copying (limitation, not a proven mechanism).  
+8. PGD saturation / weak dose–response on neutral ASR already at ε=2/255.  
+9. Shared images across tasks → non-independence across task analyses.  
+10. Possible LANCZOS vs BICUBIC preprocess discrepancy (accepted, not tuned).  
+11. Strict parser: many PGD failures are invalids.  
+12. Opt@neutral only; single primary model.  
+13. Phase B bare-token NLL erratum (corrected thereafter).  
+14. Noise seeds at Phase E use MD5-stable derivation (distribution preserved; tensors not bit-identical to Phase D noise).  
+15. Freeze hierarchy set after development exploration (honest chronology).
 
 ---
 
@@ -296,12 +317,14 @@ Labeled **untested**: milder-ε appendixendum on development only if explicitly 
 
 ## References
 
-1. Cui et al., *On the Robustness of Large Multimodal Models Against Image Adversarial Attacks*, CVPR 2024.  
-2. Bhagwatkar et al., *Improving Adversarial Robustness in Vision-Language Models with Architecture and Prompt Design*, Findings of EMNLP 2024.  
-3. Xie et al., *Chain of Attack: On the Robustness of Vision-Language Models Against Transfer-Based Adversarial Attacks*, CVPR 2025.  
-4. Goodfellow et al., *Explaining and Harnessing Adversarial Examples*, ICLR 2015.  
-5. Madry et al., *Towards Deep Learning Models Resistant to Adversarial Attacks*, ICLR 2018.  
-6. HuggingFaceTB, *SmolVLM2-500M-Video-Instruct* (model card / weights; revision pinned in freeze-config).
+1. I. J. Goodfellow, J. Shlens, and C. Szegedy, *Explaining and Harnessing Adversarial Examples*, ICLR 2015.  
+2. A. Madry, A. Makelov, L. Schmidt, D. Tsipras, and A. Vladu, *Towards Deep Learning Models Resistant to Adversarial Attacks*, ICLR 2018.  
+3. X. Cui et al., *On the Robustness of Large Multimodal Models Against Image Adversarial Attacks*, CVPR 2024.  
+4. R. Bhagwatkar et al., *Improving Adversarial Robustness in Vision-Language Models with Architecture and Prompt Design*, Findings of EMNLP 2024.  
+5. Y. Xie et al., *Chain of Attack: On the Robustness of Vision-Language Models Against Transfer-Based Adversarial Attacks*, CVPR 2025.  
+6. HuggingFaceTB, *SmolVLM2-500M-Video-Instruct* (model card / weights; revision `7b375e1b73b11138ff12fe22c8f2822d8fe03467` as frozen).
+
+Primary-source differences vs this study are tabulated in §2.1.
 
 ---
 
@@ -317,6 +340,7 @@ Labeled **untested**: milder-ε appendixendum on development only if explicitly 
 | `reports/phase-e-heldout-metrics.json` | Held-out + side-by-side |
 | `reports/artifacts/*` | Checksums + compact prediction tables |
 | `reports/figures/phase-{d,e}/` | Plots |
+| `python -m crossmodal_robustness.verify_published` | Offline rebuild of main stats from compact tables |
 
 ## Appendix B — Consolidation note (editorial)
 

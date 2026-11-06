@@ -32,11 +32,11 @@ This repository is a controlled probe of that paired question, motivated by the 
 | --- | --- | --- |
 | Goodfellow et al., ICLR 2015 (FGSM) | One-step L∞ signed-gradient attacks on classifiers | We use FGSM only as a **control** on a VLM answer-NLL objective with paired text contexts |
 | Madry et al., ICLR 2018 (PGD) | Multi-step projected gradient adversary / adversarial training | Same L∞ PGD *geometry*; here ascent is on **teacher-forced mean answer NLL** of a frozen VLM, not classifier CE with AT |
-| Cui et al., CVPR 2024 | Robustness of large multimodal models to **image** adversarial attacks | We fix a small open VLM + **synthetic** paired N/S/M text and estimate a **context DiD**, not broad LMM robustness leaderboards |
+| Cui et al., CVPR 2024 | Image adversarial attacks on multimodal models; notably, adding question context can improve post-attack accuracy | We hold the adversarial pixels fixed across neutral, truthful, and misleading text and estimate a paired **context DiD**. The general observation that context can change robustness is **not** new |
 | Bhagwatkar et al., Findings of EMNLP 2024 | Architecture and **prompt design** for VLM adversarial robustness | We do **not** redesign architecture or search prompts; prompts are frozen; text is an experimental factor, not a defense recipe |
 | Xie et al., CVPR 2025 (Chain of Attack) | Transfer-based attacks / robustness of VLMs | We study **white-box** attacks on the evaluation model only; no transfer / black-box chain |
 
-Classic white-box L∞ attacks (FGSM, PGD) supply the pixel threat model. Multimodal robustness papers above motivate *why* image attacks on VLMs matter. Our contribution is narrower and methodological: a **paired-context DiD** under a frozen no-split SmolVLM2 stack on sealed synthetic splits, with explicit negative-result reporting.
+Classic white-box L∞ attacks (FGSM, PGD) supply the pixel threat model. Cui et al. and Bhagwatkar et al. already provide evidence that prompt context or phrasing can affect VLM robustness; our secondary context effect should be read in that light. Our contribution is narrower and methodological: a **paired-context DiD** under a frozen no-split SmolVLM2 stack on sealed synthetic splits, with explicit negative-result reporting.
 
 **What this paper is not:** a new attack algorithm, a large-scale benchmark, a transfer-attack study, or a claim that supportive captions are a deployed defense.
 
@@ -190,7 +190,7 @@ Clean invalid rate: **0** on both splits. Source: `reports/phase-e-heldout-metri
 
 ### 7.2 Bounds (held-out attacked rows)
 
-Among 576 attacked rows: before-roundtrip OK rate 1.0; after-roundtrip OK rate 1.0 (`reports/phase-e-heldout-metrics.json#heldout.bounds`). Development Phase D reported the same qualitative compliance on 1152 attacked rows (`reports/phase-d-verification.md`).
+Among 576 attacked rows: before-roundtrip OK rate 1.0; after-roundtrip OK rate 1.0 under the **documented quantization tolerance** (`reports/phase-e-heldout-metrics.json#heldout.bounds`). The float attack tensors were checked against ε directly; the uint8/PIL round-trip was accepted within ε + 1.5/255 to allow rounding, as frozen in `docs/PROTOCOL.md` §7.1. The latter is **not** a claim of exact ε compliance after quantization. Development Phase D reported the same qualitative checks on 1152 attacked rows (`reports/phase-d-verification.md`).
 
 ### 7.3 Primary DiD (misleading − supportive), PGD
 
@@ -307,9 +307,9 @@ Labeled **untested**: milder-ε appendixendum on development only if explicitly 
 
 1. I. J. Goodfellow, J. Shlens, and C. Szegedy, *Explaining and Harnessing Adversarial Examples*, ICLR 2015.  
 2. A. Madry, A. Makelov, L. Schmidt, D. Tsipras, and A. Vladu, *Towards Deep Learning Models Resistant to Adversarial Attacks*, ICLR 2018.  
-3. X. Cui et al., *On the Robustness of Large Multimodal Models Against Image Adversarial Attacks*, CVPR 2024.  
-4. R. Bhagwatkar et al., *Improving Adversarial Robustness in Vision-Language Models with Architecture and Prompt Design*, Findings of EMNLP 2024.  
-5. Y. Xie et al., *Chain of Attack: On the Robustness of Vision-Language Models Against Transfer-Based Adversarial Attacks*, CVPR 2025.  
+3. X. Cui et al., [*On the Robustness of Large Multimodal Models Against Image Adversarial Attacks*](https://openaccess.thecvf.com/content/CVPR2024/html/Cui_On_the_Robustness_of_Large_Multimodal_Models_Against_Image_Adversarial_CVPR_2024_paper.html), CVPR 2024.  
+4. R. Bhagwatkar et al., [*Improving Adversarial Robustness in Vision-Language Models with Architecture and Prompt Design*](https://aclanthology.org/2024.findings-emnlp.990/), Findings of EMNLP 2024.  
+5. P. Xie et al., [*Chain of Attack: On the Robustness of Vision-Language Models Against Transfer-Based Adversarial Attacks*](https://openaccess.thecvf.com/content/CVPR2025/html/Xie_Chain_of_Attack_On_the_Robustness_of_Vision-Language_Models_Against_CVPR_2025_paper.html), CVPR 2025.  
 6. HuggingFaceTB, *SmolVLM2-500M-Video-Instruct* (model card / weights; revision `7b375e1b73b11138ff12fe22c8f2822d8fe03467` as frozen).
 
 Primary-source differences vs this study are tabulated in §2.1.
@@ -332,4 +332,4 @@ Primary-source differences vs this study are tabulated in §2.1.
 
 ## Appendix B — Consolidation note (editorial)
 
-Recommended final reviewable tip for merge consideration (when Federico decides): **`cursor/phase-f-docs-dabf`** (this Phase F branch), which contains Phase E results documentation plus this report. Open PRs #1–#6 are historical lineage; they should not be merged separately once the tip PR is chosen. This report does **not** merge or close any PR.
+Recommended final reviewable tip for merge consideration (when Federico decides): **`cursor/phase-f-docs-dabf`** (this Phase F branch), which contains Phase E results documentation plus this report. Open PRs #1–#7 are historical lineage; they should not be merged separately once the tip PR is chosen. This report does **not** merge or close any PR.

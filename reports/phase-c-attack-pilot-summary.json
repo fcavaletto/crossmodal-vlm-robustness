@@ -1,0 +1,94 @@
+{
+  "n_images": 8,
+  "epsilon": 0.031372549,
+  "pgd_steps": 7,
+  "do_image_splitting": false,
+  "wall_seconds": 762.8,
+  "summary": {
+    "clean": {
+      "by_condition": {
+        "neutral": {
+          "n": 16,
+          "correct": 12,
+          "invalid": 0
+        },
+        "supportive": {
+          "n": 16,
+          "correct": 16,
+          "invalid": 0
+        },
+        "misleading": {
+          "n": 16,
+          "correct": 2,
+          "invalid": 0
+        }
+      },
+      "nll_increased_rate": 0.0,
+      "epsilon_bound_ok_rate": 1.0
+    },
+    "fgsm": {
+      "by_condition": {
+        "neutral": {
+          "n": 16,
+          "correct": 12,
+          "invalid": 0
+        },
+        "supportive": {
+          "n": 16,
+          "correct": 16,
+          "invalid": 0
+        },
+        "misleading": {
+          "n": 16,
+          "correct": 2,
+          "invalid": 0
+        }
+      },
+      "nll_increased_rate": 0.9375,
+      "epsilon_bound_ok_rate": 1.0
+    },
+    "noise": {
+      "by_condition": {
+        "neutral": {
+          "n": 16,
+          "correct": 12,
+          "invalid": 0
+        },
+        "supportive": {
+          "n": 16,
+          "correct": 16,
+          "invalid": 0
+        },
+        "misleading": {
+          "n": 16,
+          "correct": 2,
+          "invalid": 0
+        }
+      },
+      "nll_increased_rate": 0.25,
+      "epsilon_bound_ok_rate": 1.0
+    },
+    "pgd": {
+      "by_condition": {
+        "neutral": {
+          "n": 16,
+          "correct": 0,
+          "invalid": 1
+        },
+        "supportive": {
+          "n": 16,
+          "correct": 7,
+          "invalid": 2
+        },
+        "misleading": {
+          "n": 16,
+          "correct": 0,
+          "invalid": 2
+        }
+      },
+      "nll_increased_rate": 1.0,
+      "epsilon_bound_ok_rate": 1.0
+    }
+  },
+  "all_epsilon_bounds_ok": true
+}

@@ -2,7 +2,8 @@
 
 Input tensor must contain RGB values on [0,1] *before* model normalization.
 The provided loss function must perform differentiable preprocessing and return
-a scalar loss to MAXIMIZE. No attack against the VLM is claimed yet.
+a scalar loss to MAXIMIZE (ascent). Used by the frozen SmolVLM study as a generic
+L∞ PGD primitive; see `docs/PROTOCOL.md` for the VLM threat model.
 """
 
 from __future__ import annotations

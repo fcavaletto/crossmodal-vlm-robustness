@@ -1,0 +1,51 @@
+{
+  "phase": "D",
+  "model": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct",
+  "device": "mps",
+  "do_image_splitting": false,
+  "optimize_condition": "neutral",
+  "subset": "balanced",
+  "n_images": 16,
+  "image_ids": [
+    "item_000",
+    "item_006",
+    "item_012",
+    "item_018",
+    "item_024",
+    "item_030",
+    "item_036",
+    "item_042",
+    "item_048",
+    "item_054",
+    "item_060",
+    "item_066",
+    "item_072",
+    "item_078",
+    "item_084",
+    "item_090"
+  ],
+  "tasks": [
+    "color",
+    "shape"
+  ],
+  "epsilons": [
+    0.007843137,
+    0.015686275,
+    0.031372549
+  ],
+  "pgd_steps": 7,
+  "step_size_rule": "epsilon/4",
+  "attacks": [
+    "clean",
+    "noise",
+    "fgsm",
+    "pgd"
+  ],
+  "torch_version": "2.15.0",
+  "transformers_version": "5.22.1",
+  "python_version": "3.12.14",
+  "platform": "macOS-26.6-arm64-arm-64bit",
+  "phase_b_tokenization_note": "Phase B scored bare BPE ids (e.g. 'red'); Phase C/D use leading-space tokens (e.g. '\u0120red') matching greedy decoding.",
+  "wall_seconds": 5142.3,
+  "jsonl": "results/phase_d_balanced16.jsonl"
+}

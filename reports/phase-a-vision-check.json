@@ -1,0 +1,11 @@
+{
+  "same_prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+  "red_circle_answer": "red",
+  "blue_square_answer": "blue",
+  "blank_answer": "blue",
+  "color_differs_across_images": true,
+  "shape_prompt": "Context: This image shows one large central figure.\nQuestion: What SHAPE is the large central figure? Reply with one word: circle, square, triangle, or star.",
+  "shape_red_circle": "circle, square, triangle, or star.",
+  "shape_blue_square": "square",
+  "shape_differs": true
+}

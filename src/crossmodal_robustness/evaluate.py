@@ -31,26 +31,112 @@ def select_device(preferred: str):
     return preferred
 
 
-def load_model(model_id: str, device: str):
+def load_model(model_id: str, device: str, *, revision: str | None = None):
+    """Load processor + model; optionally pin and verify a HF revision.
+
+    When ``revision`` is set, both the processor and the model are loaded from
+    that commit. Verification prefers object ``_commit_hash`` when present;
+    otherwise confirms via ``huggingface_hub.model_info(...).sha`` that the
+    requested revision resolves to the frozen commit (Transformers 5.x may omit
+    ``_commit_hash`` on this checkpoint).
+    """
     import torch
     from transformers import AutoModelForImageTextToText, AutoProcessor
 
-    processor = AutoProcessor.from_pretrained(model_id)
-    model = AutoModelForImageTextToText.from_pretrained(
-        model_id,
-        torch_dtype=torch.float32,
-        attn_implementation="eager",
-    ).to(device)
+    pretrained_kwargs = {}
+    if revision is not None:
+        pretrained_kwargs["revision"] = revision
+        hub_sha = _hub_revision_sha(model_id, revision)
+        _assert_revision_match("hub", hub_sha, revision)
+
+    processor = AutoProcessor.from_pretrained(model_id, **pretrained_kwargs)
+    # Prefer `dtype=` (Transformers >=5); fall back for older releases.
+    try:
+        model = AutoModelForImageTextToText.from_pretrained(
+            model_id,
+            dtype=torch.float32,
+            attn_implementation="eager",
+            **pretrained_kwargs,
+        ).to(device)
+    except TypeError:
+        model = AutoModelForImageTextToText.from_pretrained(
+            model_id,
+            torch_dtype=torch.float32,
+            attn_implementation="eager",
+            **pretrained_kwargs,
+        ).to(device)
     model.eval()
+    if revision is not None:
+        model_commit = _resolved_commit_hash(model)
+        processor_commit = _resolved_commit_hash(processor)
+        if model_commit is not None:
+            _assert_revision_match("model", model_commit, revision)
+        if processor_commit is not None:
+            _assert_revision_match("processor", processor_commit, revision)
+        processor._frozen_revision = revision  # type: ignore[attr-defined]
+        model.config._frozen_revision_verified = revision
+        model.config._frozen_revision_hub_sha = hub_sha
     return processor, model
 
 
-def run_inference(processor, model, image_path: Path, prompt: str, max_tokens: int):
-    """Perform generation through the official Transformers multimodal API."""
+def _hub_revision_sha(model_id: str, revision: str) -> str:
+    from huggingface_hub import model_info
+
+    info = model_info(model_id, revision=revision)
+    sha = getattr(info, "sha", None)
+    if not sha:
+        raise RuntimeError(f"huggingface_hub returned no sha for {model_id}@{revision}")
+    return str(sha)
+
+
+def _resolved_commit_hash(obj) -> str | None:
+    """Best-effort HF commit hash from a loaded model or processor."""
+    for candidate in (
+        getattr(obj, "config", None),
+        obj,
+        getattr(obj, "tokenizer", None),
+        getattr(obj, "image_processor", None),
+    ):
+        if candidate is None:
+            continue
+        commit = getattr(candidate, "_commit_hash", None)
+        if commit:
+            return str(commit)
+    return None
+
+
+def _assert_revision_match(label: str, got: str | None, wanted: str) -> None:
+    if got is None:
+        raise RuntimeError(
+            f"Loaded {label} has no commit hash; cannot verify revision {wanted}"
+        )
+    if not str(got).startswith(wanted[:12]) and str(got) != wanted:
+        raise RuntimeError(f"{label} revision mismatch: wanted {wanted}, got {got}")
+
+
+def run_inference(
+    processor,
+    model,
+    image_path: Path,
+    prompt: str,
+    max_tokens: int,
+    *,
+    do_image_splitting: bool = True,
+    image: Image.Image | None = None,
+):
+    """Perform generation through the official Transformers multimodal API.
+
+    ``do_image_splitting`` must match adversarial preprocessing when evaluating
+    attacked images. Pass a PIL ``image`` to skip reloading from disk (used for
+    in-memory perturbed tensors converted once at the eval boundary).
+    """
     import torch
 
-    with Image.open(image_path) as image_file:
-        image = image_file.convert("RGB")
+    if image is None:
+        with Image.open(image_path) as image_file:
+            image = image_file.convert("RGB")
+    else:
+        image = image.convert("RGB")
     messages = [{"role": "user", "content": [
         {"type": "image", "image": image},
         {"type": "text", "text": prompt},
@@ -61,6 +147,7 @@ def run_inference(processor, model, image_path: Path, prompt: str, max_tokens: i
         tokenize=True,
         return_dict=True,
         return_tensors="pt",
+        processor_kwargs={"do_image_splitting": do_image_splitting},
     )
     inputs = {name: value.to(model.device) if hasattr(value, "to") else value
               for name, value in inputs.items()}
@@ -84,6 +171,12 @@ def main() -> None:
                         help="Number of images, not image/task/condition evaluations")
     parser.add_argument("--max-new-tokens", type=int, default=12)
     parser.add_argument("--output", type=Path, default=Path("results/baseline.jsonl"))
+    parser.add_argument(
+        "--do-image-splitting",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="SmolVLM image splitting. Phase C uses --no-do-image-splitting consistently.",
+    )
     parser.add_argument("--dry-run", action="store_true", help="Inspect prompts without downloading a model")
     args = parser.parse_args()
 
@@ -106,7 +199,11 @@ def main() -> None:
     import transformers
 
     device = select_device(args.device)
-    print(f"Loading {args.model} on {device}; {len(jobs)} evaluations", flush=True)
+    print(
+        f"Loading {args.model} on {device}; {len(jobs)} evaluations; "
+        f"do_image_splitting={args.do_image_splitting}",
+        flush=True,
+    )
     processor, model = load_model(args.model, device)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     summary = defaultdict(lambda: [0, 0])
@@ -115,8 +212,14 @@ def main() -> None:
         for index, (record, task, condition) in enumerate(jobs, start=1):
             prompt = build_prompt(record, task, condition)
             start = time.perf_counter()
-            answer = run_inference(processor, model, Path(record["absolute_image"]),
-                                   prompt, args.max_new_tokens)
+            answer = run_inference(
+                processor,
+                model,
+                Path(record["absolute_image"]),
+                prompt,
+                args.max_new_tokens,
+                do_image_splitting=args.do_image_splitting,
+            )
             elapsed = time.perf_counter() - start
             parsed = parse_answer(answer, task)
             correct = parsed == record[task]
@@ -138,6 +241,7 @@ def main() -> None:
                 "correct": correct,
                 "seconds": round(elapsed, 3),
                 "attack": "none",
+                "do_image_splitting": args.do_image_splitting,
                 "model": args.model,
                 "device": device,
                 "torch_version": torch.__version__,

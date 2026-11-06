@@ -1,0 +1,69 @@
+{
+  "n": 384,
+  "by_task_condition": {
+    "color|misleading": {
+      "n": 64,
+      "correct": 3,
+      "invalid": 13,
+      "wrong": 48
+    },
+    "color|neutral": {
+      "n": 64,
+      "correct": 64,
+      "invalid": 0,
+      "wrong": 0
+    },
+    "color|supportive": {
+      "n": 64,
+      "correct": 64,
+      "invalid": 0,
+      "wrong": 0
+    },
+    "shape|misleading": {
+      "n": 64,
+      "correct": 33,
+      "invalid": 15,
+      "wrong": 16
+    },
+    "shape|neutral": {
+      "n": 64,
+      "correct": 52,
+      "invalid": 12,
+      "wrong": 0
+    },
+    "shape|supportive": {
+      "n": 64,
+      "correct": 56,
+      "invalid": 8,
+      "wrong": 0
+    }
+  },
+  "by_condition": {
+    "misleading": {
+      "n": 128,
+      "correct": 36,
+      "invalid": 28
+    },
+    "neutral": {
+      "n": 128,
+      "correct": 116,
+      "invalid": 12
+    },
+    "supportive": {
+      "n": 128,
+      "correct": 120,
+      "invalid": 8
+    }
+  },
+  "overall": {
+    "correct": 272,
+    "invalid": 48,
+    "n": 384
+  },
+  "latency": {
+    "mean": 4.8405546875,
+    "median": 4.622,
+    "min": 2.905,
+    "max": 9.167
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "phase": "C",
+  "check": "loss_validation_nosplit",
+  "image_id": "item_000",
+  "task": "color",
+  "condition": "neutral",
+  "correct_label": "red",
+  "prompt": "Context: This image shows one large central figure.\nQuestion: What COLOR is the large central figure? Reply with one word: red, blue, green, or yellow.",
+  "do_image_splitting": false,
+  "generation": {
+    "raw": "red",
+    "seconds": 0.4,
+    "matches_correct_label": true
+  },
+  "nll_ranking_pil": [
+    {
+      "answer": "red",
+      "nll": 0.2663741707801819
+    },
+    {
+      "answer": "blue",
+      "nll": 2.165372371673584
+    },
+    {
+      "answer": "yellow",
+      "nll": 2.6733832359313965
+    },
+    {
+      "answer": "green",
+      "nll": 3.687386989593506
+    }
+  ],
+  "nll_ranking_torch": [
+    {
+      "answer": "red",
+      "nll": 0.27423015236854553
+    },
+    {
+      "answer": "blue",
+      "nll": 2.121079683303833
+    },
+    {
+      "answer": "yellow",
+      "nll": 2.6802780628204346
+    },
+    {
+      "answer": "green",
+      "nll": 3.735125780105591
+    }
+  ],
+  "correct_nll_pil": 0.2663741707801819,
+  "correct_nll_torch": 0.27423015236854553,
+  "best_wrong_pil": {
+    "answer": "blue",
+    "nll": 2.165372371673584
+  },
+  "best_wrong_torch": {
+    "answer": "blue",
+    "nll": 2.121079683303833
+  },
+  "margin_best_wrong_minus_correct_pil": 1.898998200893402,
+  "margin_best_wrong_minus_correct_torch": 1.8468495309352875,
+  "correct_is_lowest_nll_pil": true,
+  "correct_is_lowest_nll_torch": true,
+  "preprocess_diff": {
+    "max_abs": 0.26583075523376465,
+    "mean_abs": 0.0008964971639215946,
+    "shape": [
+      1,
+      1,
+      3,
+      512,
+      512
+    ]
+  },
+  "generation_from_pil_pixel_values": "red",
+  "generation_from_torch_pixel_values": "red",
+  "pil_torch_generation_agree": true,
+  "token_alignment_correct": {
+    "answer": "red",
+    "ids": [
+      2382
+    ],
+    "tokens": [
+      "\u0120red"
+    ]
+  },
+  "passed": true
+}

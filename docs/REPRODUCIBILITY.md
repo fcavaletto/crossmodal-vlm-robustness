@@ -1,25 +1,24 @@
-# Reproducibility and educational guide
+# Reproducibility guide
 
-This document explains **how the frozen study was run** and how a **fresh clone**
-can re-check published numbers **without** gitignored `results/*.jsonl` files and
-**without** model inference.
+Two jobs live here: (1) record **exactly** how the frozen runs were executed, and
+(2) let a **fresh clone** re-check published statistics without gitignored
+`results/*.jsonl` files and without downloading the model.
 
-Companion: [`BEGINNER_WALKTHROUGH.md`](BEGINNER_WALKTHROUGH.md).
+For the scientific story behind the estimands, prefer
+[`BEGINNER_WALKTHROUGH.md`](BEGINNER_WALKTHROUGH.md) and the technical report.
 
 ---
 
-## 1. Conceptual walkthrough
+## 1. Pipeline in five steps
 
-1. **Stimuli.** Each PNG has a known color and shape. Prompts attach neutral,
-   supportive, or misleading context, then ask for color or shape.  
-2. **Clean eval.** Generate a short answer; strict parser → correct / incorrect / invalid.  
-3. **Attack.** Under the **neutral** prompt, ascend **mean** teacher-forced NLL of
-   the correct leading-space answer tokens w.r.t. pixels (FGSM or PGD), or add
-   equal-budget noise.  
-4. **Paired eval.** Reuse the **same** perturbed image under all three contexts.  
-5. **Estimands.** Additional error \(\Delta = e_{\mathrm{adv}}-e_{\mathrm{clean}}\).
-   Primary DiD averages \(\Delta_{\mathrm{mis}}-\Delta_{\mathrm{sup}}\) over images;
-   secondary uses neutral instead of misleading. Bootstrap images for CIs.
+Each PNG carries a known color and shape. Prompts attach a neutral, supportive,
+or misleading context and then ask for color or shape. Clean evaluation uses
+greedy generation and a strict parser (wrong or invalid → error). Attacks ascend
+**mean** teacher-forced NLL of the correct leading-space answer tokens under the
+**neutral** prompt (FGSM, PGD, or equal-budget noise), then reuse those pixels
+under all three contexts. The headline estimands are additional error
+\(\Delta = e_{\mathrm{adv}}-e_{\mathrm{clean}}\) and the image-mean DiDs
+(primary: mis−sup; secondary: neu−sup), with image bootstrap confidence intervals.
 
 ---
 

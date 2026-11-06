@@ -1,8 +1,9 @@
 # Cross-modal text context and L∞ image attacks on SmolVLM2: a controlled synthetic study
 
 **Authors / project:** Federico Cavaletto (study owner); agent-assisted implementation under Checkpoint 0–1 protocol  
-**Code tip of record (Phase E complete):** `f3dd0bb` on `cursor/phase-e-prep-dabf`  
-**Report date:** 2026-11-06 (Phase F documentation)  
+**Experimental tip (Phase E complete):** `f3dd0bb` on `cursor/phase-e-prep-dabf`  
+**Documentation tip:** `cursor/phase-f-docs-dabf` (PR #8)  
+**Report date:** 2026-11-06 (Phase F / Study 1 documentation)  
 **Status:** Methods demonstration on a synthetic geometric domain. **Not** a claim of novel SOTA attack performance or real-world VLM safety rates.
 
 All numeric results below are taken from committed artifacts under `reports/` (especially `phase-d-full64-metrics.json`, `phase-e-heldout-metrics.json`, and the Phase A–E verification logs). Denominators are shown explicitly. No new model inference was run for this report.
@@ -11,15 +12,15 @@ All numeric results below are taken from committed artifacts under `reports/` (e
 
 ## Abstract
 
-We study whether *misleading textual context* amplifies a small vision–language model’s susceptibility to white-box L∞ image perturbations relative to *supportive* (truthful) context, on a 96-image synthetic color/shape dataset with sealed development (64) and held-out test (32) splits. Attacks optimize teacher-forced NLL of the correct answer under a **neutral** prompt and reuse the **same** pixels under neutral, supportive, and misleading evaluation. On SmolVLM2-500M (no image splitting; MPS), the **primary** difference-in-differences (DiD) estimand—additional error under misleading minus additional error under supportive—is **negative for color** on both development and held-out test (e.g. held-out PGD ε=8/255: −0.500, 95% CI [−0.688, −0.344], n=32). This is dominated by a **misleading-color clean floor** (development 6/64 ≈ 9.4%; held-out 4/32 = 12.5%). A **secondary** DiD (neutral − supportive) is positive for color and indicates that context changes vulnerability under a fixed attack; it is **not** a validated defense and may partly reflect answer-copying. Random L∞ noise is near-null; FGSM is weak relative to PGD. The study freezes the Phase D as-run grid before held-out evaluation and reports negative primary evidence without rewriting the original hypothesis.
+Do false captions make a small vision–language model *more* fragile to a fixed image attack than true captions? We test that paired contrast on a 96-image synthetic color/shape dataset (64 development, 32 sealed held-out) with SmolVLM2-500M under no image splitting on MPS. Each perturbation is optimized by ascending teacher-forced **mean** answer NLL under a **neutral** prompt; the same pixels are then evaluated under neutral, supportive, and misleading text. The **primary** difference-in-differences (DiD)—additional error under misleading minus additional error under supportive—is **negative for color** on both splits (held-out PGD at ε=8/255: −0.500, 95% CI [−0.688, −0.344], n=32). A **misleading-color clean floor** (development 6/64 ≈ 9.4%; held-out 4/32 = 12.5%) dominates identification. A **secondary** DiD (neutral − supportive) is positive for color and shows that context still changes vulnerability; it is **not** a validated defense and may partly reflect answer-copying. Random L∞ noise is near-null; FGSM is weak relative to PGD. The Phase D as-run grid was frozen before held-out evaluation; we report the negative primary result without rewriting the original hypothesis.
 
 ---
 
 ## 1. Motivation
 
-Multimodal models consume both pixels and text. A natural question for adversarial robustness is whether **semantic conflict in text** changes the damage done by a **fixed visual attack**. That question is narrower than “are VLMs robust?” and narrower than “is there a defense.” It asks for a *paired contrast* under controlled stimuli.
+A VLM does not see pixels alone. It also reads whatever sentence we place next to the image. If that sentence conflicts with the figure, an obvious worry is that the model becomes easier to push off the correct answer with a small pixel change. The worry is easy to overstate: “easier” has to mean *relative to a truthful sentence*, under the *same* visual attack—not merely that attacks exist, and not that a caption is a product defense.
 
-This project is a compact technical demonstration motivated by the AI4I / Politecnico di Torino PhD topic on adversarial robustness in multimodal foundation models. The goal is methodological clarity—threat model, freeze discipline, negative-result reporting—on hardware available for local PyTorch MPS work (Apple Silicon M4, 24 GB), not portfolio marketing or alarmist language about attacks.
+This repository is a controlled probe of that paired question, motivated by the AI4I / Politecnico di Torino PhD topic on adversarial robustness in multimodal foundation models. The aim is methodological clarity on hardware we can actually run (Apple Silicon M4, 24 GB, PyTorch MPS): an explicit threat model, a freeze-then-held-out discipline, and room for a negative primary result.
 
 ---
 
@@ -244,26 +245,13 @@ Equal-budget noise remains near-null on DiD; FGSM is much weaker than PGD at the
 
 ## 8. Interpretation
 
-**Observations**
+Separate what we measured from what we infer and from what remains untested.
 
-1. Primary DiD for color is negative on development and held-out; CIs exclude 0.
-2. Misleading-color clean accuracy is very low on both splits (floor).
-3. Supportive context reduces additional PGD error relative to neutral (secondary DiD > 0 for color).
-4. PGD saturates neutral ASR near the top of the frozen grid already at small ε.
-5. Attack success is not always monotone in ε under greedy decoding (e.g. held-out color-neutral PGD conditional ASR 100% at ε=2/255 vs 93.1% at ε=8/255).
+**Observations.** Primary DiD for color is negative on development and held-out; the bootstrap CIs exclude 0. Misleading-color clean accuracy is very low on both splits (the floor). Supportive context reduces additional PGD error relative to neutral (secondary DiD > 0 for color). PGD already drives neutral ASR near the top of the grid at small ε. Attack success is not always monotone in ε under greedy decoding—for example, held-out color-neutral PGD conditional ASR is 100% at ε=2/255 and 93.1% at ε=8/255.
 
-**Inferences (limited)**
+**Inferences (limited).** On this synthetic benchmark with this attack stack, the data **do not support** the claim that misleading context *amplifies* PGD damage relative to supportive context for color. Context still **changes** vulnerability (secondary contrast), but supportive text restates the true label in a form that matches the answer channel—**answer-copying is a plausible partial mechanism**, not established. Floor effects make primary amplification poorly identifiable for color: there is little room for additional misleading error.
 
-1. On this synthetic benchmark with this attack stack, the data **do not support** the claim that misleading context *amplifies* PGD damage relative to supportive context for color.
-2. Context still **changes** vulnerability (secondary contrast), but supportive text restates the true label in-distribution with the answer format—**answer-copying is a plausible partial mechanism**, not ruled out.
-3. Floor effects make primary amplification poorly identifiable for color: there is little room for additional misleading error.
-
-**Untested hypotheses** (explicitly unlabeled as results)
-
-- Whether milder ε / fewer steps would restore dose–response without changing signs.
-- Whether optimizing under misleading or supportive prompts would change DiDs.
-- Transfer to other VLMs (e.g. Qwen), natural images, or non-L∞ threats.
-- Whether supportive mitigation survives when the context cannot be copied as an answer token.
+**Untested hypotheses** (not results). Milder ε or fewer steps; optimizing under misleading or supportive prompts; transfer to other VLMs or natural images; whether supportive mitigation survives when the context cannot be copied as an answer token.
 
 ---
 

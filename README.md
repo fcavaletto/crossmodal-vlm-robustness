@@ -1,30 +1,36 @@
-# Cross-modal text context and L∞ image attacks on SmolVLM2
+# When text and pixels disagree: a small VLM stress test
 
-**Question (one paragraph).** On a small synthetic color/shape dataset, does *misleading* textual context make SmolVLM2 *more* susceptible to white-box L∞ image perturbations than *supportive* (truthful) context, when the attack is optimized once under a neutral prompt and the same pixels are evaluated under all three contexts?
+Vision–language models read an image *and* a sentence. Suppose the sentence is wrong about what is in the picture. Does that make the model *easier* to fool with a carefully chosen pixel perturbation than when the sentence tells the truth?
 
-**Held-out answer (honest).** On the sealed 32-image test split, the **primary** difference-in-differences (additional error: misleading − supportive) for PGD is **negative for color** at ε ∈ {2,4,8}/255 (e.g. ε=8/255: −0.500, 95% CI [−0.688, −0.344]). That does **not** support the amplification claim. A severe **misleading-color clean floor** (4/32 = 12.5% held-out; 6/64 ≈ 9.4% development) limits identification. A **secondary** contrast (neutral − supportive) is positive for color and shows that context changes vulnerability; it is **not** a validated defense and may partly reflect answer-copying. Full write-up: [`reports/technical_report.md`](reports/technical_report.md). Protocol freeze: [`docs/PROTOCOL.md`](docs/PROTOCOL.md).
+That is the question this repository answers—on a deliberately tiny, fully labeled synthetic domain, with a frozen open-weight model, and with the answer allowed to be “no.”
+
+We use [`SmolVLM2-500M-Video-Instruct`](https://huggingface.co/HuggingFaceTB/SmolVLM2-500M-Video-Instruct) (revision `7b375e1b73b11138ff12fe22c8f2822d8fe03467`) on Apple MPS. Each image is a simple colored shape. The model sees one of three short contexts—**neutral**, **supportive** (true label), or **misleading** (false label)—then answers a one-word color or shape question. We craft a white-box L∞ image attack once under the neutral prompt, then score the *same* perturbed pixels under all three contexts. The primary contrast is a difference-in-differences (DiD) on *additional* error: misleading minus supportive. Full protocol: [`docs/PROTOCOL.md`](docs/PROTOCOL.md). Full write-up: [`reports/technical_report.md`](reports/technical_report.md).
+
+## What happened on held-out data
+
+On the sealed **32**-image test split, the primary DiD for PGD is **negative for color** at every frozen budget ε ∈ {2,4,8}/255. At ε=8/255 the estimate is **−0.500** (95% CI [−0.688, −0.344]). That does **not** support the amplification claim.
+
+Two qualifications sit next to that number. First, clean accuracy under misleading color is already a **floor**—**4/32 = 12.5%** on test (development was **6/64 ≈ 9.4%**)—so there is little room for attacks to *add* misleading errors. Second, a **secondary** contrast (neutral − supportive) is positive for color: context still changes vulnerability under a fixed attack. That secondary signal is **not** a validated defense; supportive text restates the true label in a form the model can copy, and we have no mechanistic evidence beyond the paired error contrast.
 
 ![Held-out PGD DiD (bootstrap CIs)](reports/figures/phase-e/pgd_did_bootstrap.png)
 
-*How to read:* for each task, points are image-level DiD estimates vs ε. The mis−sup series below zero for color means *less* additional attack-caused error under misleading than under supportive—opposite of amplification. The neu−sup series above zero means more additional error under neutral than supportive.
+For each task, the plot shows image-level DiD estimates versus ε. The mis−sup series below zero for color means *less* additional attack-caused error under misleading than under supportive—the opposite of amplification. The neu−sup series above zero means more additional error under neutral than supportive.
 
 ![Held-out robust accuracy vs ε (color)](reports/figures/phase-e/accuracy_vs_eps_color.png)
 
-*How to read:* solid/dashed curves are post-attack accuracy by context; grey horizontal lines mark clean accuracy. Supportive stays higher under PGD; misleading starts near the floor.
+Curves are post-attack accuracy by context; grey lines mark clean accuracy. Supportive stays higher under PGD; misleading starts near the floor.
 
-## What this shows vs does not show
+## What this shows, and what it does not
 
-| Shows | Does **not** show |
-| --- | --- |
-| A reproducible no-split MPS attack + paired-context evaluation stack on SmolVLM2 | That misleading text amplifies PGD vs supportive on this benchmark (primary DiD ≤ 0 for color) |
-| Held-out confirmation of a development negative primary result under a frozen grid | That supportive captions are a general defense |
-| Floor effects, invalid-rate structure, noise≈null / FGSM≪PGD controls | Real-world VLM safety rates, transfer attacks, or SOTA novelty |
+This repository shows a reproducible no-split MPS attack stack on SmolVLM2, a freeze-then-held-out workflow, and a negative primary result that survives the sealed test split—including floor effects, invalid-rate structure, and controls where noise is near-null and FGSM is much weaker than PGD.
 
-**Rigor note.** Primary vs secondary analyses were **frozen after Phase D development and before held-out**—not independently preregistered before all exploration. Chronology and the original hypothesis are preserved; we report the negative primary finding rather than rewriting the question. Historical Phase A–E logs stay immutable.
+It does **not** show that misleading text amplifies PGD relative to supportive text on this benchmark. It does not show that supportive captions are a general defense. It does not speak to real-world VLM safety rates, transfer attacks, or novelty relative to large multimodal benchmarks.
 
-**Also explicit:** small \(n\) (32 test / 64 dev), many reported cells without formal multiplicity correction, synthetic stimuli only, some non-monotonic ASR vs ε, and **no mechanistic evidence** that supportive text “defends” beyond the paired error contrast (answer-copying is a plausible untested mechanism). Details: technical report §9.
+The analysis hierarchy (primary mis−sup; secondary neu−sup) was **frozen after Phase D development and before held-out**—not independently preregistered before exploration. We kept the original question and reported the negative primary finding rather than rewriting the story. Historical Phase A–E logs remain immutable.
 
-## Quick start (MacBook Air M4, 24 GB; PyTorch MPS)
+Other limits worth naming up front: small \(n\) (32 test / 64 development), many reported cells without formal multiplicity correction, synthetic stimuli only, some non-monotonic attack-success rates versus ε, and no mechanistic evidence for why supportive text helps. Details live in the technical report §9.
+
+## Run the checks locally (MacBook Air M4, 24 GB; PyTorch MPS)
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
@@ -33,45 +39,42 @@ python -m pip install -e '.[dev,plot]'
 python -m pytest -q
 ```
 
-### Re-check published statistics on a fresh clone (no GPU, no `results/`)
-
-Committed compact prediction tables + metrics JSON are enough:
+On a fresh clone you can re-check the published statistics **without a GPU** and **without** gitignored `results/*.jsonl` files:
 
 ```bash
 python -m crossmodal_robustness.verify_published
 ```
 
-This rebuilds accuracy / ASR / additional error / DiD (+ bootstrap CIs) from
+That command rebuilds accuracy, ASR, additional error, and DiD (with bootstrap CIs) from
 `reports/artifacts/*_predictions_compact.jsonl` and compares them to
 `reports/phase-e-heldout-metrics.json` and `reports/phase-d-full64-metrics.json`.
-Exit code 0 means the published numbers match. **Do not** require gitignored
-`results/*.jsonl` for this check.
+Exit code 0 means the published numbers match.
 
-Dry-run prompts (no weights):
+Prompt dry-run (no weights):
 
 ```bash
 python -m crossmodal_robustness.evaluate --dry-run --task both --max-examples 2
 ```
 
-Full held-out **inference** re-run is expensive (~3 h on the recording host) and
-was a one-shot under freeze—see [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md).
-Do not retune after seeing test numbers.
+Re-running held-out **inference** is a multi-hour one-shot under the freeze; see
+[`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md). Do not retune after seeing test numbers.
 
-## Newcomer path
+## Where to read next
 
-1. Read this README’s question + shows/does-not-show table.  
-2. Skim [`docs/BEGINNER_WALKTHROUGH.md`](docs/BEGINNER_WALKTHROUGH.md) (concepts + single-image DiD).  
-3. Open [`reports/technical_report.md`](reports/technical_report.md) for math and full tables.  
-4. Use [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md) for exact commands, versions, checksums.  
-5. Treat `reports/phase-*-verification.md` as chronological lab logs.
+Start with [`docs/BEGINNER_WALKTHROUGH.md`](docs/BEGINNER_WALKTHROUGH.md) if DiD or “floor” is new.
+Then [`reports/technical_report.md`](reports/technical_report.md) for math and full tables,
+[`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md) for exact commands and checksums, and
+`reports/phase-*-verification.md` for chronological lab logs.
 
 ## Dataset
 
 ![Synthetic contact sheet](data/synthetic_v1/preview.png)
 
-96 original 256×256 PNGs (4 colors × 4 shapes × 6 variants); 64 development / 32 held-out; MIT-licensed procedural drawings; manifest with SHA-256 hashes. Not a claim about natural imagery.
+96 original 256×256 PNGs (4 colors × 4 shapes × 6 variants); 64 development / 32 held-out;
+MIT-licensed procedural drawings; manifest with SHA-256 hashes. This is a controlled probe,
+not a claim about natural imagery.
 
-## Links
+## Document map
 
 | Doc | Path |
 | --- | --- |
@@ -84,8 +87,6 @@ Do not retune after seeing test numbers.
 | Phase E verification | [`reports/phase-e-verification.md`](reports/phase-e-verification.md) |
 | Artifact checksums + compact predictions | [`reports/artifacts/`](reports/artifacts/) |
 
-Default model: [`HuggingFaceTB/SmolVLM2-500M-Video-Instruct`](https://huggingface.co/HuggingFaceTB/SmolVLM2-500M-Video-Instruct) (weights not redistributed; pin revision `7b375e1b73b11138ff12fe22c8f2822d8fe03467`).
-
 ## License
 
-Source and synthetic images: [MIT](LICENSE). Third-party model weights: follow the model owner’s terms.
+Source and synthetic images: [MIT](LICENSE). Third-party model weights follow the model owner’s terms.

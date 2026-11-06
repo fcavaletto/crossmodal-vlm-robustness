@@ -1,0 +1,95 @@
+{
+  "artifact_id": "phase-f-experiment-metadata-2026-11-06",
+  "created_utc": "2026-11-06T08:50:20.207860+00:00",
+  "code_tip_phase_e": "f3dd0bbab0c48febd7161c7ee1f695d9122885e8",
+  "branch_phase_e": "cursor/phase-e-prep-dabf",
+  "authorized_command_commit": "34d85d4b4491e2aab16ec9d5adece07c61361b8a",
+  "revision_hotfix_commit": "d1ef71e2add66eecd7437439d4010aafd5aee2b4",
+  "model_id": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct",
+  "hf_revision": "7b375e1b73b11138ff12fe22c8f2822d8fe03467",
+  "seed": 20261105,
+  "epsilons": [
+    0.00784313725490196,
+    0.01568627450980392,
+    0.03137254901960784
+  ],
+  "pgd_steps": 7,
+  "do_image_splitting": false,
+  "optimize_condition": "neutral",
+  "python": "3.12.14",
+  "torch": "2.15.0",
+  "transformers": "5.22.1",
+  "device": "mps",
+  "wall_seconds_heldout": 11149.1,
+  "wall_seconds_phase_d_full64": 15852.8,
+  "missing_source_jsonl": [],
+  "derived_prediction_tables": {
+    "phase_e_heldout_jsonl": {
+      "source_path": "results/phase_e_heldout.jsonl",
+      "source_sha256": "7eb6ab12f5a2fa088c25b6a4c72aa4ec2f0624e431be066487a49664e8451539",
+      "source_nbytes": 952077,
+      "source_n_lines": 640,
+      "compact_path": "reports/artifacts/phase_e_heldout_predictions_compact.jsonl",
+      "compact_sha256": "29baad0f6ddcfd21ce63ae0284bf2c18464afb4662b5047b0d9f0afe9f78001f",
+      "compact_n_prediction_rows": 1920,
+      "note": "Derived by flattening evaluations from existing JSONL; no model inference."
+    },
+    "phase_d_full64_jsonl": {
+      "source_path": "results/phase_d_full64.jsonl",
+      "source_sha256": "07d6247bdf130bce0bf35f077e7b50af092b73251f98b4d275bdcafe738243b1",
+      "source_nbytes": 1848944,
+      "source_n_lines": 1280,
+      "compact_path": "reports/artifacts/phase_d_full64_predictions_compact.jsonl",
+      "compact_sha256": "a0837b628fc2726521ce5983b3a814fbbd81a1082ac4cae08068d271655d0fcb",
+      "compact_n_prediction_rows": 3840,
+      "note": "Derived by flattening evaluations from existing JSONL; no model inference."
+    }
+  },
+  "committed_artifact_checksums": {
+    "reports/phase-e-heldout-metrics.json": {
+      "sha256": "fbaf6df5ce2c7962d181ce60552103236ea0106f47a1763fc1b3daf36e7ce9f5",
+      "nbytes": 108602
+    },
+    "reports/phase-d-full64-metrics.json": {
+      "sha256": "91fec91bf94661a88d92b8a96fb0d9998bc2c48347a9681a3124361b750d30cb",
+      "nbytes": 41461
+    },
+    "reports/phase-e-heldout-meta.json": {
+      "sha256": "0fa81abb5f95f35c8d7f0d296b65c784af2acfb5da8ceace5b1fe6202335ea38",
+      "nbytes": 1607
+    },
+    "reports/phase-d-full64-meta.json": {
+      "sha256": "cd6ed5f733bf0c58db0ef4aa9501f50b9fea78a0449392f8ab2fdf3708277b66",
+      "nbytes": 1842
+    },
+    "reports/phase-e-verification.md": {
+      "sha256": "b1b9f0d329b51a9f01a80ca42307adbf30c305d3262e808292e23efced0b8d76",
+      "nbytes": 9327
+    },
+    "reports/phase-d-verification.md": {
+      "sha256": "9f31cc9189ec3ce2064a4b6ad8c9dd8719192604bcf73a66110a25df326ebf27",
+      "nbytes": 7846
+    },
+    "docs/PROTOCOL.md": {
+      "sha256": "a060a91e0e82e4b88d1b0a41c0995f1a1297d36e385c046d41d724c1827cc0bc",
+      "nbytes": 14285
+    },
+    "docs/freeze-config.md": {
+      "sha256": "7998f40793b45027366e38d02f445f32ad722a74791e1ce344b3af484b07ece3",
+      "nbytes": 3541
+    },
+    "docs/pre-test-addendum-2026-11-05.md": {
+      "sha256": "be97902b4c7afb560bb7f968c904374c454adcbd73da0438c77ceefdb64f2868",
+      "nbytes": 3413
+    },
+    "data/synthetic_v1/manifest.jsonl": {
+      "sha256": "74d6a765eff9ae426a8822ca15024f4de9780336e84dcd56dcad1ba24c283f7e",
+      "nbytes": 22624
+    },
+    "data/synthetic_v1/metadata.json": {
+      "sha256": "12312a36092299c17d44b5997022a61c997a7bf53e5fce9441c1023221849946",
+      "nbytes": 625
+    }
+  },
+  "gitignored_raw_jsonl_note": "results/*.jsonl are gitignored. Compact prediction tables under reports/artifacts/ are derived from local copies when present; metrics JSON in reports/ remain the primary committed numeric record."
+}

@@ -1,0 +1,323 @@
+# Cross-modal text context and L∞ image attacks on SmolVLM2: a controlled synthetic study
+
+**Authors / project:** Federico Cavaletto (study owner); agent-assisted implementation under Checkpoint 0–1 protocol  
+**Code tip of record (Phase E complete):** `f3dd0bb` on `cursor/phase-e-prep-dabf`  
+**Report date:** 2026-11-06 (Phase F documentation)  
+**Status:** Methods demonstration on a synthetic geometric domain. **Not** a claim of novel SOTA attack performance or real-world VLM safety rates.
+
+All numeric results below are taken from committed artifacts under `reports/` (especially `phase-d-full64-metrics.json`, `phase-e-heldout-metrics.json`, and the Phase A–E verification logs). Denominators are shown explicitly. No new model inference was run for this report.
+
+---
+
+## Abstract
+
+We study whether *misleading textual context* amplifies a small vision–language model’s susceptibility to white-box L∞ image perturbations relative to *supportive* (truthful) context, on a 96-image synthetic color/shape dataset with sealed development (64) and held-out test (32) splits. Attacks optimize teacher-forced NLL of the correct answer under a **neutral** prompt and reuse the **same** pixels under neutral, supportive, and misleading evaluation. On SmolVLM2-500M (no image splitting; MPS), the **primary** difference-in-differences (DiD) estimand—additional error under misleading minus additional error under supportive—is **negative for color** on both development and held-out test (e.g. held-out PGD ε=8/255: −0.500, 95% CI [−0.688, −0.344], n=32). This is dominated by a **misleading-color clean floor** (development 6/64 ≈ 9.4%; held-out 4/32 = 12.5%). A **secondary** DiD (neutral − supportive) is positive for color and indicates that context changes vulnerability under a fixed attack; it is **not** a validated defense and may partly reflect answer-copying. Random L∞ noise is near-null; FGSM is weak relative to PGD. The study freezes the Phase D as-run grid before held-out evaluation and reports negative primary evidence without rewriting the original hypothesis.
+
+---
+
+## 1. Motivation
+
+Multimodal models consume both pixels and text. A natural question for adversarial robustness is whether **semantic conflict in text** changes the damage done by a **fixed visual attack**. That question is narrower than “are VLMs robust?” and narrower than “is there a defense.” It asks for a *paired contrast* under controlled stimuli.
+
+This project is a compact technical demonstration motivated by the AI4I / Politecnico di Torino PhD topic on adversarial robustness in multimodal foundation models. The goal is methodological clarity—threat model, freeze discipline, negative-result reporting—on hardware available for local PyTorch MPS work (Apple Silicon M4, 24 GB), not portfolio marketing or alarmist language about attacks.
+
+---
+
+## 2. Background and related work
+
+Cross-modal robustness literature documents that vision–language models can fail under image perturbations and that prompts/architecture choices matter for robustness (e.g. Cui et al., CVPR 2024; Bhagwatkar et al., EMNLP 2024 Findings; Xie et al., CVPR 2025 on transfer-based attacks). Classic white-box L∞ attacks include FGSM (Goodfellow et al., 2015) and PGD (Madry et al., 2018). Difference-in-differences style contrasts are used here as a simple paired estimator of *context-conditional additional error*, not as an econometric identification claim about real-world interventions.
+
+**What this paper is not:** a new attack algorithm, a large-scale benchmark, or a claim that supportive captions are a deployed defense.
+
+---
+
+## 3. Questions and hypotheses
+
+### 3.1 Original research question (unchanged)
+
+On simple labeled images, does *misleading textual context* amplify a small VLM’s susceptibility to adversarial image perturbations, relative to *truthful* (supportive) textual context?
+
+### 3.2 Analysis hierarchy (frozen Checkpoint 1; D1(c))
+
+| Role | Contrast | Status |
+| --- | --- | --- |
+| **Primary** | misleading − supportive DiD on additional error | Preregistered-style primary; report even if negative / floor-dominated |
+| **Secondary** | neutral − supportive DiD | Strongest secondary signal on development; **not** a validated defense |
+| Diagnostics | ASR, invalid rates, bounds, noise/FGSM controls, NLL margins | Required reporting; not substitutes for primary |
+
+**Important chronology (honest):** The primary/secondary hierarchy was **frozen after Phase D development review** and **before held-out evaluation**. It was **not** independently preregistered before all exploration. Development results informed the freeze; held-out is confirmatory. We do **not** retrospectively rewrite the original amplification hypothesis because the primary DiD came out negative.
+
+---
+
+## 4. Threat model
+
+| Role | Specification |
+| --- | --- |
+| Model | Frozen `HuggingFaceTB/SmolVLM2-500M-Video-Instruct` @ revision `7b375e1b73b11138ff12fe22c8f2822d8fe03467` |
+| Defender | Weights not updated; input-space attacks only |
+| Task | 4-way color or 4-way shape of one large central figure |
+| Image adversary | L∞ ≤ ε in RGB `[0,1]`; white-box gradients on the evaluation model |
+| Text adversary | False descriptive context sentence (misleading); not jailbreaks |
+| Attack use | Craft under **neutral** prompt; evaluate same pixels under N/S/M |
+
+---
+
+## 5. Experimental design
+
+### 5.1 Dataset
+
+- `synthetic_v1`: 96 × 256×256 PNG images (Pillow); 4 colors × 4 shapes × 6 variants.
+- Development: 64 images (variants 0–3). Held-out test: 32 images (variants 4–5), sealed until Checkpoint 1 freeze.
+- Manifest: `data/synthetic_v1/manifest.jsonl` with per-file SHA-256.
+- Generator seed: **20261105**.
+
+### 5.2 Prompts and parser (immutable after freeze)
+
+Neutral / supportive / misleading context sentences; fixed color and shape questions (see `docs/PROTOCOL.md` §6). Strict exact-match parser; invalid → error.
+
+### 5.3 Preprocess
+
+`do_image_splitting=False` (required for feasible MPS backward on 24 GB). Attack on float CHW `[0,1]`; eval via uint8 PIL round-trip. Leading-space BPE answer tokens for the NLL objective (e.g. `Ġred`).
+
+### 5.4 Frozen attack grid (D2 — Phase D as-run)
+
+ε ∈ {2/255, 4/255, 8/255}; PGD 7 steps, α=ε/4, no random start; FGSM; uniform L∞ noise; optimize @ neutral; seed **20261105**.
+
+### 5.5 Software / hardware
+
+Python 3.12.14; torch 2.15.0; torchvision 0.29.2; transformers 5.22.1; device MPS (MacBook Air M4, 24 GB). Generation: `do_sample=False`, `max_new_tokens=12`.
+
+---
+
+## 6. Mathematical definitions (with worked example)
+
+### 6.1 L∞ ball
+
+For clean image \(x \in [0,1]^{C\times H\times W}\) and budget \(\varepsilon\),
+
+\[
+\|x^{\mathrm{adv}}-x\|_\infty \le \varepsilon,\qquad x^{\mathrm{adv}}\in[0,1]^{C\times H\times W}.
+\]
+
+### 6.2 Teacher-forced answer NLL (attack objective)
+
+Let \(y^\star\) be the correct label string tokenized with leading-space BPE pieces \(t_1,\ldots,t_L\) as emitted after `Assistant:`. With multimodal context \(c\) (image + prompt), the scalar loss is
+
+\[
+\mathcal{L}(x;c,y^\star)=-\sum_{\ell=1}^{L}\log p_\theta(t_\ell\mid t_{<\ell},c(x)).
+\]
+
+Attacks **ascend** \(\mathcal{L}\) w.r.t. \(x\) (make the correct answer less likely under teacher forcing).
+
+### 6.3 FGSM / PGD
+
+**FGSM** (one step): \(x \leftarrow \mathrm{clip}_{[0,1]}\big(x+\varepsilon\cdot\mathrm{sign}(\nabla_x\mathcal{L})\big)\).
+
+**PGD** (projected gradient ascent), \(K=7\), step \(\alpha=\varepsilon/4\), no random start:
+
+\[
+x^{k+1}=\Pi_{B_\infty(x,\varepsilon)\cap[0,1]}\big(x^{k}+\alpha\cdot\mathrm{sign}(\nabla_{x^k}\mathcal{L})\big).
+\]
+
+**Noise control:** \(x^{\mathrm{adv}}=\mathrm{clip}_{[0,1]}(x+\delta)\), \(\delta\sim\mathrm{Unif}[-\varepsilon,\varepsilon]^{C\times H\times W}\) (stable MD5-derived seeds at Phase E; see §10).
+
+### 6.4 Error, ASR, additional error, DiD
+
+For image \(i\), condition \(c\in\{\mathrm{neu},\mathrm{sup},\mathrm{mis}\}\):
+
+\[
+e_{i,c}^{\mathrm{clean}},\; e_{i,c}^{\mathrm{adv}}\in\{0,1\}
+\]
+
+(1 if incorrect or invalid under the strict parser).
+
+**Conditional ASR** (among clean-correct): among \(i\) with \(e_{i,c}^{\mathrm{clean}}=0\), fraction with \(e_{i,c}^{\mathrm{adv}}=1\).
+
+**Additional error:** \(\Delta_{i,c}=e_{i,c}^{\mathrm{adv}}-e_{i,c}^{\mathrm{clean}}\).
+
+**Primary DiD:**
+
+\[
+\widehat{\mathrm{DiD}}_{\mathrm{mis-sup}}=\frac{1}{n}\sum_i\big(\Delta_{i,\mathrm{mis}}-\Delta_{i,\mathrm{sup}}\big).
+\]
+
+**Secondary DiD:** same with \(\mathrm{neu}\) instead of \(\mathrm{mis}\).
+
+**Image bootstrap:** resample images with replacement, \(B=2000\), seed `20261105`, percentile 2.5/97.5 CI. Tasks analyzed separately.
+
+### 6.5 Worked single-image example (held-out, existing predictions)
+
+From `results/phase_e_heldout.jsonl` (local; compact mirror in `reports/artifacts/`), image `item_004`, task **color**, PGD \(\varepsilon=8/255\):
+
+| Condition | Clean parsed | Adv parsed | \(e^{\mathrm{clean}}\) | \(e^{\mathrm{adv}}\) | \(\Delta\) |
+| --- | --- | --- | --- | --- | --- |
+| neutral | red | blue | 0 | 1 | +1 |
+| supportive | red | red | 0 | 0 | 0 |
+| misleading | green | green | 1 | 1 | 0 |
+
+Primary contribution: \(\Delta_{\mathrm{mis}}-\Delta_{\mathrm{sup}}=0-0=0\).  
+Secondary contribution: \(\Delta_{\mathrm{neu}}-\Delta_{\mathrm{sup}}=1-0=1\).
+
+The held-out mean primary DiD is the average of such image-level contributions over all 32 test images (not this single example alone). Bootstrap CIs resample those 32 contributions.
+
+---
+
+## 7. Results
+
+### 7.1 Clean accuracy
+
+| Split | Task | Neutral | Supportive | Misleading |
+| --- | --- | --- | --- | --- |
+| Development (64) | color | 63/64 (98.4%) | 64/64 (100%) | **6/64 (9.4%)** |
+| Development (64) | shape | 48/64 (75.0%) | 64/64 (100%) | 29/64 (45.3%) |
+| Held-out (32) | color | 29/32 (90.6%) | 32/32 (100%) | **4/32 (12.5%)** |
+| Held-out (32) | shape | 24/32 (75.0%) | 32/32 (100%) | 8/32 (25.0%) |
+
+Clean invalid rate: **0** on both splits. Source: `reports/phase-e-heldout-metrics.json`.
+
+### 7.2 Bounds (held-out attacked rows)
+
+Among 576 attacked rows: before-roundtrip OK rate 1.0; after-roundtrip OK rate 1.0 (`reports/phase-e-heldout-metrics.json#heldout.bounds`). Development Phase D reported the same qualitative compliance on 1152 attacked rows (`reports/phase-d-verification.md`).
+
+### 7.3 Primary DiD (misleading − supportive), PGD
+
+| ε | Task | Held-out estimate [CI95] | Development estimate [CI95] |
+| --- | --- | --- | --- |
+| 2/255 | color | **−0.375** [−0.562, −0.156] | −0.531 [−0.656, −0.391] |
+| 4/255 | color | **−0.375** [−0.594, −0.156] | −0.547 [−0.672, −0.406] |
+| 8/255 | color | **−0.500** [−0.688, −0.344] | −0.516 [−0.656, −0.375] |
+| 2/255 | shape | −0.188 [−0.469, 0.062] | −0.078 [−0.281, 0.125] |
+| 4/255 | shape | −0.281 [−0.531, −0.031] | −0.016 [−0.234, 0.203] |
+| 8/255 | shape | −0.188 [−0.469, 0.062] | −0.016 [−0.219, 0.188] |
+
+n_images = 32 (held-out) / 64 (development); n_boot = 2000. Source: `did_side_by_side` in `reports/phase-e-heldout-metrics.json`.
+
+### 7.4 Secondary DiD (neutral − supportive), PGD
+
+| ε | Task | Held-out estimate [CI95] | Development estimate [CI95] |
+| --- | --- | --- | --- |
+| 2/255 | color | **0.406** [0.188, 0.656] | 0.359 [0.250, 0.500] |
+| 4/255 | color | **0.406** [0.188, 0.625] | 0.297 [0.172, 0.422] |
+| 8/255 | color | **0.219** [0.000, 0.438] | 0.375 [0.250, 0.500] |
+| 2/255 | shape | 0.250 [−0.062, 0.531] | 0.219 [0.016, 0.406] |
+| 4/255 | shape | 0.219 [−0.094, 0.500] | 0.281 [0.062, 0.469] |
+| 8/255 | shape | 0.312 [0.000, 0.594] | 0.250 [0.047, 0.453] |
+
+### 7.5 Conditional ASR (held-out, PGD; flips among clean-correct)
+
+| ε | Task | Neutral | Supportive | Misleading* |
+| --- | --- | --- | --- | --- |
+| 8/255 | color | 27/29 = 93.1% | 20/32 = 62.5% | 4/4 = 100% |
+| 8/255 | shape | 24/24 = 100% | 14/32 = 43.8% | 8/8 = 100% |
+
+\*Tiny denominators under misleading color — not an amplification readout. Full grid: `reports/phase-e-verification.md`.
+
+### 7.6 Figures
+
+Held-out:
+
+![Held-out robust accuracy vs ε (color)](figures/phase-e/accuracy_vs_eps_color.png)
+
+![Held-out PGD DiD with bootstrap CIs](figures/phase-e/pgd_did_bootstrap.png)
+
+Development counterparts: `reports/figures/phase-d/`.
+
+**How to read the DiD figure:** points above 0 mean more *additional* attack-caused error in the “primary” context of that contrast than in supportive. Primary contrast (mis−sup) below 0 for color is **evidence against** amplification, not for it.
+
+### 7.7 Controls (observation)
+
+Equal-budget noise remains near-null on DiD; FGSM is much weaker than PGD at the same ε (`reports/phase-e-verification.md` §Controls).
+
+---
+
+## 8. Interpretation
+
+**Observations**
+
+1. Primary DiD for color is negative on development and held-out; CIs exclude 0.
+2. Misleading-color clean accuracy is very low on both splits (floor).
+3. Supportive context reduces additional PGD error relative to neutral (secondary DiD > 0 for color).
+4. PGD saturates neutral ASR near the top of the frozen grid already at small ε.
+
+**Inferences (limited)**
+
+1. On this synthetic benchmark with this attack stack, the data **do not support** the claim that misleading context *amplifies* PGD damage relative to supportive context for color.
+2. Context still **changes** vulnerability (secondary contrast), but supportive text restates the true label in-distribution with the answer format—**answer-copying is a plausible partial mechanism**, not ruled out.
+3. Floor effects make primary amplification poorly identifiable for color: there is little room for additional misleading error.
+
+**Untested hypotheses** (explicitly unlabeled as results)
+
+- Whether milder ε / fewer steps would restore dose–response without changing signs.
+- Whether optimizing under misleading or supportive prompts would change DiDs.
+- Transfer to other VLMs (e.g. Qwen), natural images, or non-L∞ threats.
+- Whether supportive mitigation survives when the context cannot be copied as an answer token.
+
+---
+
+## 9. Limitations
+
+1. Synthetic geometric domain — limited external validity.  
+2. Misleading-color floor undermines primary amplification identification.  
+3. Supportive context may enable answer copying.  
+4. PGD saturation / weak dose–response on neutral ASR at ε=2/255.  
+5. Shared images across tasks → non-independence across task analyses.  
+6. Possible LANCZOS vs BICUBIC preprocess discrepancy (accepted, not tuned).  
+7. Strict parser: many PGD failures are invalids.  
+8. Opt@neutral only.  
+9. Single primary model.  
+10. Phase B bare-token NLL erratum (corrected thereafter).  
+11. Noise seeds at Phase E use MD5-stable derivation (distribution preserved; tensors not bit-identical to Phase D noise).  
+12. Freeze hierarchy set after development exploration (honest chronology).
+
+---
+
+## 10. Research process notes (mandatory disclosures)
+
+1. **Ġred / leading-space erratum (Phase B→C):** early gradient-gate scoring used bare BPE ids; greedy decoding emits leading-space pieces. Phase C+ use leading-space tokenization only. Phase B NLL magnitudes are not comparable.  
+2. **Revision verify hotfix (`d1ef71e`):** first held-out launch aborted before inference because Transformers 5.22.1 omitted `_commit_hash` on this checkpoint. Verification switched to `huggingface_hub.model_info(...).sha` while still loading with `revision=7b375e1b…`. No attack/prompt change.  
+3. **Sleep / agent disconnect:** attempt 2 continued in the same process and completed 640/640 rows; no second launch; no retune.  
+4. **Pre-test addendum (2026-11-05):** documents MD5-stable noise seeds vs process-unstable `hash()`.
+
+---
+
+## 11. Reproducibility pointers
+
+See `docs/REPRODUCIBILITY.md` and `reports/artifacts/experiment_metadata.json` (checksums of committed metrics and derived compact prediction tables). Raw `results/*.jsonl` are gitignored; when present locally they hash-match the metadata record used to derive compact tables.
+
+Approximate wall times on the recording host: Phase D full-64 ≈ 15853 s; Phase E held-out ≈ 11149 s; peak MPS memory on the order of ~4 GB in Phase D logs.
+
+---
+
+## 12. Future work (untested)
+
+Labeled **untested**: milder-ε appendixendum on development only if explicitly authorized; optimize-under-misleading pilots; cross-model transfer; natural-image extension; defenses that cannot be reduced to answer copying. None of these were run in Phase F.
+
+---
+
+## References
+
+1. Cui et al., *On the Robustness of Large Multimodal Models Against Image Adversarial Attacks*, CVPR 2024.  
+2. Bhagwatkar et al., *Improving Adversarial Robustness in Vision-Language Models with Architecture and Prompt Design*, Findings of EMNLP 2024.  
+3. Xie et al., *Chain of Attack: On the Robustness of Vision-Language Models Against Transfer-Based Adversarial Attacks*, CVPR 2025.  
+4. Goodfellow et al., *Explaining and Harnessing Adversarial Examples*, ICLR 2015.  
+5. Madry et al., *Towards Deep Learning Models Resistant to Adversarial Attacks*, ICLR 2018.  
+6. HuggingFaceTB, *SmolVLM2-500M-Video-Instruct* (model card / weights; revision pinned in freeze-config).
+
+---
+
+## Appendix A — Artifact inventory
+
+| Artifact | Role |
+| --- | --- |
+| `docs/PROTOCOL.md` | Frozen human protocol |
+| `docs/freeze-config.md` | Machine-readable pins |
+| `docs/pre-test-addendum-2026-11-05.md` | Pre-held-out technical corrections |
+| `reports/phase-{a,b,c,d,e}-verification.md` | Immutable experiment logs |
+| `reports/phase-d-full64-metrics.json` | Development metrics |
+| `reports/phase-e-heldout-metrics.json` | Held-out + side-by-side |
+| `reports/artifacts/*` | Checksums + compact prediction tables |
+| `reports/figures/phase-{d,e}/` | Plots |
+
+## Appendix B — Consolidation note (editorial)
+
+Recommended final reviewable tip for merge consideration (when Federico decides): **`cursor/phase-f-docs-dabf`** (this Phase F branch), which contains Phase E results documentation plus this report. Open PRs #1–#6 are historical lineage; they should not be merged separately once the tip PR is chosen. This report does **not** merge or close any PR.
